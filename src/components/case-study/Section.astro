@@ -1,0 +1,21 @@
+---
+// Case study "Section" frame: a big H1-ish heading + its content, 64px
+// (4rem) apart. Sections in a case study sit 120px (7.5rem) apart —
+// applied as top margin here so each Section carries its own spacing
+// rather than the page having to remember gaps between them.
+import RevealText from "../RevealText.astro";
+import { nbsp } from "../../lib/text";
+
+interface Props {
+  id: string;
+  title: string;
+}
+const { id, title } = Astro.props;
+---
+
+<section id={id} class="mt-[7.5rem] flex flex-col gap-[4rem] first:mt-0">
+  <RevealText text={nbsp(title)} as="h2" class="text-[3rem] font-semibold uppercase leading-[1.12] text-[#252322]" />
+  <div class="flex flex-col gap-[3.75rem]">
+    <slot />
+  </div>
+</section>

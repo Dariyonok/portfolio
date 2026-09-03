@@ -1,0 +1,65 @@
+---
+// "награды и номинации" box. `href` left empty ("") until the real award
+// page links are in — replace them directly in the page's data array.
+import { nbsp } from '../../lib/text'
+
+interface Award {
+  name: string
+  festival: string
+  year: string
+  href: string
+  imageSrc?: string
+}
+interface Props {
+  awards: Award[]
+}
+const { awards } = Astro.props
+---
+
+<div class="flex flex-col gap-[1.5rem]">
+  <p class="text-[0.875rem] uppercase leading-[1.12] text-[#aaa7a7]">
+    {nbsp('награды и номинации')}
+  </p>
+  <ul class="flex flex-col gap-[1.25rem]">
+    {
+      awards.map((award) => (
+        <li>
+          <a
+            href={award.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex items-center gap-[1rem]"
+          >
+            {award.imageSrc ? (
+              <img
+                src={award.imageSrc}
+                alt=""
+                class="h-[2.75rem] w-[2.75rem] shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span
+                class="h-[2.75rem] w-[2.75rem] shrink-0 rounded-full bg-[#f7f6f4]"
+                aria-hidden="true"
+              />
+            )}
+            <span class="flex flex-col gap-[0.5rem]">
+              <span class="text-[1.5rem] font-semibold leading-[1.12] text-[#252322] transition-colors duration-300 group-hover:text-[#585454]">
+                {nbsp(award.name)}
+              </span>
+              <span class="flex items-center gap-[0.5rem] text-[1rem] leading-[1.12] text-[#aaa7a7] transition-colors duration-300 group-hover:text-[#cdcbcb]">
+                {nbsp(award.festival)} <span aria-hidden="true">•</span>{' '}
+                {award.year}
+              </span>
+            </span>
+            <span
+              aria-hidden="true"
+              class="ml-auto text-[1.125rem] text-[#aaa7a7] transition-colors duration-300 group-hover:text-[#585454]"
+            >
+              ↗
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>

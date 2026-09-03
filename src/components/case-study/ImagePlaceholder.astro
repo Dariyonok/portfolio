@@ -1,0 +1,20 @@
+---
+// A stand-in for an image/illustration that hasn't been dropped in yet —
+// dashed border + label, so it's obvious at a glance what still needs an
+// asset. Swap for a real <img> (or an InfographicFrame around one) once
+// you have it; this is deliberately not itself an InfographicFrame, since
+// some of these sit inside one already.
+interface Props {
+  label?: string;
+  class?: string;
+  aspect?: string; // Tailwind arbitrary aspect-ratio value, e.g. "16/9"
+}
+const { label = "добавьте изображение", class: className = "", aspect = "16/10" } = Astro.props;
+---
+
+<div
+  class={`flex items-center justify-center rounded-[2.25rem] border-2 border-dashed border-black/10 bg-black/[0.02] text-center text-[1rem] text-black/40 ${className}`}
+  style={{ aspectRatio: aspect }}
+>
+  {label}
+</div>

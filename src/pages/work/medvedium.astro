@@ -1,0 +1,581 @@
+---
+// Медведиум case study — the first of these, meant as the pattern for
+// the rest. Built from PDF exports of the Hero/About/Research frames
+// (Figma MCP was rate-limited); Интерфейс, Разработка фирменного стиля,
+// and Заключение have no source content yet, so they're clearly-marked
+// placeholders below. Images are all placeholders too, per the request —
+// swap ImagePlaceholder/InfographicFrame's dashed boxes for real <img>s
+// whenever those are ready.
+//
+// Grid: 1512px reference, 12 columns, 52px page margins, 20px gutters →
+// 99px/column. Side nav = 3 columns (21.0625rem); content = 9 columns
+// (65.6875rem); 20px (1.25rem) gutter between them. See CaseHero.astro
+// for the hero's own (different, overlapping) use of the same math.
+//
+// Vertical rhythm, per the file's own auto-layout structure: 120px
+// between Sections (incl. hero→first section), 64px from a Section's H1
+// to its content, 60px between Paragraphs, 48px from a Paragraph's H2 to
+// its content, 44px between content blocks in a Paragraph, 36px between
+// a TextWithInfographics block's text and its image/table.
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import RevealText from '../../components/RevealText.astro'
+import CaseHero from '../../components/case-study/CaseHero.astro'
+import SideNav from '../../components/case-study/SideNav.astro'
+import Section from '../../components/case-study/Section.astro'
+import ParagraphBlock from '../../components/case-study/ParagraphBlock.astro'
+import TextInfographic from '../../components/case-study/TextInfographic.astro'
+import InfographicFrame from '../../components/case-study/InfographicFrame.astro'
+import ImagePlaceholder from '../../components/case-study/ImagePlaceholder.astro'
+import AwardsList from '../../components/case-study/AwardsList.astro'
+import MetaRow from '../../components/case-study/MetaRow.astro'
+import StatsBox from '../../components/case-study/StatsBox.astro'
+import IconCards from '../../components/case-study/IconCards.astro'
+import CompetitorCards from '../../components/case-study/CompetitorCards.astro'
+import { nbsp } from '../../lib/text'
+
+const navItems = [
+  { label: 'О проекте', href: '#about-project' },
+  { label: 'Исследование', href: '#research' },
+  { label: 'Интерфейс', href: '#interface' },
+  { label: 'Разработка фирменного стиля', href: '#identity' },
+  { label: 'Заключение', href: '#conclusion' }
+]
+
+const myRoleTasks = [
+  'Провела опрос пользователей и проанализировала результаты',
+  'Отвечала за проектирование интерфейса разделов с ежедневными заданиями и мини-играми',
+  'Собрала компоненты в UI-Kit',
+  'Участвовала в разработке айдентики и дизайне носителей'
+]
+---
+
+<BaseLayout
+  title="Медведиум"
+  description="Приложение-друг для вашего ребёнка. Количественное исследование, прототипирование, айдентика, дизайн-система."
+  headerSticky={false}
+  footerCTA={false}
+>
+  <CaseHero
+    title="медведиум"
+    description="приложение-друг для вашего ребёнка"
+    tags={[
+      'количественное исследование',
+      'прототипирование',
+      'айдентика',
+      'дизайн-система'
+    ]}
+    year="2024"
+    imageSrc="/images/projects/medvedium/medvedium-case-image-1.jpg"
+  />
+
+  {
+    /* `items-start` matters here, same as it did for the about-me sticky
+       stack: without it, flex's default `stretch` makes SideNav's `<nav>`
+       as tall as the (very long) content column, which then throws off
+       its `top-1/2 -translate-y-1/2` centering math completely (the
+       translate is 50% of the element's *own* height). */
+  }
+  <div class="flex items-start gap-[1.25rem] px-[3.25rem] pb-[7.5rem]">
+    <SideNav items={navItems} />
+
+    <div class="min-w-0 flex-1">
+      <Section id="about-project" title="о проекте">
+        <ParagraphBlock heading="про продукт">
+          <TextInfographic
+            text="Медведиум — приложение с ежедневными интересными заданиями, которое поможет ребенку проявить себя и не даст ему скучать, пока родители заняты. В Медведиуме обучение сочетается с игрой и общением с ИИ-персонажами, чтобы малыши не уставали от объёмного материала и сохраняли интерес к новым открытиям. В дополнение к приложению предусмотрена рабочая тетрадь, где ребёнок может закрепить изученный материал."
+          >
+            <InfographicFrame slot="infographic">
+              <AwardsList
+                awards={[
+                  {
+                    name: 'Шорт-лист в номинации «Концепции в цифровом дизайне»',
+                    festival: 'Фестиваль «Среда»',
+                    year: '2024',
+                    imageSrc: '/images/projects/medvedium/sredalogo.png',
+                    href: 'https://2024.festivalsreda.ru/shortlist/concepts-digital/index.html'
+                  },
+                  {
+                    name: '3-е место в номинации «Цифровой продукт»',
+                    festival: 'Конкурс «HSE Creative Open»',
+                    year: '2024',
+                    imageSrc: '/images/projects/medvedium/hselogo.png',
+                    href: 'https://design.hse.ru/news/4162#digital_product'
+                  }
+                ]}
+              />
+            </InfographicFrame>
+          </TextInfographic>
+
+          <MetaRow
+            fields={[
+              { label: 'моя роль:', values: ['UX/UI дизайнер'] },
+              { label: 'период:', values: ['апр. 2024 – июнь 2024'] },
+              {
+                label: 'команда:',
+                values: ['Полина Ефимова', 'Нарыйаана Парникова']
+              }
+            ]}
+          />
+        </ParagraphBlock>
+
+        <ParagraphBlock heading="моя роль">
+          <TextInfographic>
+            <ol class="flex max-w-[43.375rem] flex-col gap-[1rem]">
+              {
+                myRoleTasks.map((task, i) => (
+                  <li class="flex gap-[1rem]">
+                    <span class="text-[1.25rem] leading-[1.12] text-[#cdcbcb]">
+                      {i + 1}.
+                    </span>
+                    <RevealText
+                      text={nbsp(task)}
+                      class="text-[1.25rem] leading-[1.12] text-[#585454]"
+                    />
+                  </li>
+                ))
+              }
+            </ol>
+
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-2.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+
+        <ParagraphBlock heading="задача проекта">
+          <TextInfographic>
+            <div class="flex flex-col gap-[2rem]">
+              {
+                /* Manrope SemiBold 64px/112% — same style as the stat percentages in StatsBox.astro. */
+              }
+              <RevealText
+                text={nbsp(
+                  'разработать дизайн развивающего приложения для детей дошкольного и младшего школьного возраста'
+                )}
+                as="h3"
+                class="text-[4rem] font-semibold uppercase leading-[1.12] text-[#252322]"
+              />
+              <RevealText
+                text={nbsp(
+                  'Нам важно было создать такое приложение, в котором дети смогли бы развиваться разносторонне: прокачивать не только счёт и письмо, но и коммуникативные навыки, мелкую моторику, креативное мышление.'
+                )}
+                unit="line"
+                class="max-w-[43.375rem] text-[1.25rem] leading-[1.12] text-[#585454]"
+              />
+            </div>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+
+      <Section id="research" title="исследование">
+        <ParagraphBlock heading="проблема, с которой всё началось">
+          <TextInfographic
+            text="Родители переживают из-за того, что их дети проводят много времени в интернете впустую. Одновременно с этим, дети часто испытывают скуку, они хотят проявить себя, но им может не хватать стимула для творчества"
+          />
+        </ParagraphBlock>
+
+        <ParagraphBlock heading="опрос пользователей">
+          <TextInfographic
+            text="Мы решили спросить у родителей, действительно ли эта проблема актуальна, или же наше наблюдение является точечным. Также было важно уточнить, как родители относятся к цифровым продуктам для детей, каким видят идеальный сценарий развития своего ребёнка и какие навыки считают необходимыми для освоения"
+          >
+            <Fragment slot="infographic">
+              <StatsBox
+                goalLabel="цель:"
+                goal="Понять, сколько на самом деле времени у родителей получается уделять детям и что для них важно в воспитании ребёнка в цифровой среде"
+                sampleLabel="выборка:"
+                sample="124 человека. Респондентов мы искали через знакомых, которые состоят в чатах родителей в школах и детских садах"
+                stats={[
+                  {
+                    percent: '50%',
+                    description:
+                      'признались, что видят детей только вечером после работы, что реже, чем им хотелось бы',
+                    insight:
+                      'Актуальность проблемы подтвердилась, родители переживают, что дети растут без их присмотра'
+                  },
+                  {
+                    percent: '55%',
+                    description:
+                      'родителей следят за экранным временем и контентом, который потребляет ребёнок',
+                    insight:
+                      'Нужно продумать элемент родительского контроля внутри приложения, чтобы родители знали, что ребёнок делал в приложении и сколько времени'
+                  },
+                  {
+                    percent: '45%',
+                    description:
+                      'не хватает упражнений на развитие воображения в существующих сервисах',
+                    insight:
+                      'Задействовать в упражнениях не только цифровую среду, но и окружающие ребёнка предметы'
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+        </ParagraphBlock>
+
+        <ParagraphBlock heading="целевая аудитория">
+          <TextInfographic
+            text="На основе опроса мы выделили три сегмента аудитории, которым было бы интересно наше приложение"
+          >
+            <Fragment slot="infographic">
+              <IconCards
+                cards={[
+                  {
+                    icon: '/images/projects/medvedium/medvedium-target-audience-1.png',
+                    caption:
+                      'Родители, которые работают и не могут сидеть с детьми дома, но хотят знать, чем интересуется и занимается их ребенок'
+                  },
+                  {
+                    icon: '/images/projects/medvedium/medvedium-target-audience-2.png',
+                    caption:
+                      'Родители, которые ищут познавательные активности и ценят интерактивные задания, способствующие развитию детей'
+                  },
+                  {
+                    icon: '/images/projects/medvedium/medvedium-target-audience-3.png',
+                    caption:
+                      'Дети 5-11 лет, которым нравится проходить интерактивные задания, решать головоломки и заниматься творчеством'
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+        </ParagraphBlock>
+
+        <ParagraphBlock heading="конкуренты">
+          <TextInfographic
+            text="Проанализировав конкурентов, мы смогли сформулировать, какие у приложения должны быть преимущества. Медведиум доступен ребёнку в любое время и не требует активного участия родителей, он объединяет в себе методику из образовательных приложений, но также поощряет взаимодействие с реальным миром и нестандартное мышление."
+          >
+            <Fragment slot="infographic">
+              <CompetitorCards
+                competitors={[
+                  {
+                    name: 'Развивающие приложения и мини-игры',
+                    pros: 'полезный контент с методикой быстрого обучения',
+                    cons: 'виртуальный мир не задействует реальность',
+                    logos: [
+                      '/images/projects/medvedium/competitors-first-1.png',
+                      '/images/projects/medvedium/competitors-first-2.png',
+                      '/images/projects/medvedium/competitors-first-3.png'
+                    ]
+                  },
+                  {
+                    name: 'Ютуб-каналы с развивающими видео',
+                    pros: 'контента много, и он регулярно обновляется',
+                    cons: 'нет практических заданий',
+                    logos: [
+                      '/images/projects/medvedium/competitors-second-1.png',
+                      '/images/projects/medvedium/competitors-second-2.png',
+                      '/images/projects/medvedium/competitors-second-3.png'
+                    ]
+                  },
+                  {
+                    name: 'Оффлайн-кружки и секции',
+                    pros: 'реальное взаимодействие и коммуникация со сверстниками',
+                    cons: 'время занятия ограничено, нужно водить и забирать ребёнка',
+                    logos: [
+                      '/images/projects/medvedium/competitors-third-1.png',
+                      '/images/projects/medvedium/competitors-third-2.png',
+                      '/images/projects/medvedium/competitors-third-3.png'
+                    ]
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+
+      {
+        /* Интерфейс, Разработка фирменного стиля, and Заключение: no PDF
+           source yet ("only have text and images" per your note) — these
+           are placeholders following the same Section/ParagraphBlock/
+           TextInfographic pattern as above, ready to swap real copy into
+           whenever you have it. */
+      }
+      <Section id="interface" title="интерфейс">
+        <ParagraphBlock heading="регистрация и настройка профиля">
+          <TextInfographic
+            text="Предполагается, что регистрацию в приложении и настройку профиля проходит родитель. Здесь можно сразу придумать код-пароль, чтобы у ребёнка не было доступа к настройкам экранного времени и другим серьёзным функциям приложения."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-3.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Для персонализации опыта, в настройке профиля требуется указать имена родителя и ребёнка, возраст малыша, а также оформить подписку на рабочие тетради, по которым можно заниматься вне приложения."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-4.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="ежедневные задания">
+          <TextInfographic
+            text="Каждый день ребенку доступен один сюжетный уровень, состоящий как из онлайн, так и из оффлайн упражнений с ИИ-проверкой. Упражнения разнообразны и задействуют разные механики от введения ответа голосом до фотографирования объектов или страничек рабочей тетради."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-5.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-6.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="В конце каждого урока предусмотрена небольшая награда — QR-код с персонажем, с которым можно поиграть."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-7.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="мини-игры">
+          <TextInfographic
+            text="Мини-игры с любимыми персонажами помогут отвлечься от занятий и не дадут заскучать."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-8.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-9.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="С маскотами приложения — Медведиумом, Лисицыным, Совелием, Тигрумием и Китовским также можно общаться в чатах и в звонках — вместо персонажа ребёнку отвечает ИИ-система."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-10.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-11.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="профиль">
+          <TextInfographic
+            text="В профиле ребёнок может смотреть свои достижения, а родители — отслеживать успеваемость и контролировать учебный процесс. определённые разделы профиля доступ есть только у родителей — по паролю, заданному при регистрации."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-12.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-13.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="дизайн-система">
+          <TextInfographic
+            text="Для проекта была собрана дизайн-система по атомарному принципу."
+            links={[{ text: 'дизайн-система', href: 'https://www.figma.com/design/oLB5WP0WncNvc1EXi2sM6I/%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6?node-id=1-11&t=mE5jdXAnNHRCajpa-1' }]}
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-14.png"
+                alt=""
+                class="aspect-[1051/595] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+
+      <Section id="identity" title="разработка фирменного стиля">
+        <ParagraphBlock heading="Элементы фирменного стиля">
+          <TextInfographic
+            text="В процессе работы над проектом мы разработали фирменный стиль и персонажей. В айдентике используются два шрифта, несколько основных и дополнительных цветов, а также иллюстрации, созданные в Midjourney на основе детских рисунков."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-15.jpg"
+                alt=""
+                class="aspect-[1051/504] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-16.jpg"
+                alt=""
+                class="aspect-[1051/504] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-17.jpg"
+                alt=""
+                class="aspect-[1051/473] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="Носители фирменного стиля">
+          <TextInfographic>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-18.png"
+                alt=""
+                class="aspect-[1051/537] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-19.png"
+                alt=""
+                class="aspect-[1051/537] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-20.png"
+                alt=""
+                class="aspect-[1051/582] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-21.png"
+                alt=""
+                class="aspect-[1051/542] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-22.png"
+                alt=""
+                class="aspect-[1051/625] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-23.png"
+                alt=""
+                class="aspect-[1051/410] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-24.png"
+                alt=""
+                class="aspect-[1051/656] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-25.png"
+                alt=""
+                class="aspect-[1051/575] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-26.png"
+                alt=""
+                class="aspect-[1051/583] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-27.png"
+                alt=""
+                class="aspect-[1051/530] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-29.png"
+                alt=""
+                class="aspect-[1051/537] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-30.png"
+                alt=""
+                class="aspect-[1051/583] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-31.png"
+                alt=""
+                class="aspect-[1051/583] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-32.png"
+                alt=""
+                class="aspect-[1051/522] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/medvedium/medvedium-case-image-33.png"
+                alt=""
+                class="aspect-[1051/583] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+
+      <Section id="conclusion" title="заключение">
+        <ParagraphBlock heading="результаты проекта">
+          <TextInfographic
+            text="В результате работы над проектом мы с командой спроектировали прототип мобильного приложения с 5 ключевыми сценариями, собрали дизайн-систему из 80+ компонентов, а также разработали дружелюбную айдентику бренда. Проект основан на опросе с участием 124 пользователей."
+          />
+        </ParagraphBlock>
+        <ParagraphBlock heading="следующие шаги">
+          <TextInfographic
+            text="Протестировать приложение на пользователях, собрать обратную связь и внести правки. Нам интересно проверить, будет ли интерфейс понятным для детей и как его воспримут родители."
+          />
+        </ParagraphBlock>
+      </Section>
+    </div>
+  </div>
+</BaseLayout>

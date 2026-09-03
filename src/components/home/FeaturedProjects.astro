@@ -1,0 +1,524 @@
+---
+// Matches Figma "Frame 2087326087" — the 4 large case-study cards.
+//
+// Each card is a background canvas + a stack of freely-positioned
+// ImageLayer images (see ImageLayer.astro) — not a flattened image. Drop
+// your own screenshots in by editing a card's `images` array below: `src`
+// is the file, `rotate` is its resting tilt, and the `hover*` values are
+// where it moves/scales/rotates to when the card is hovered.
+//
+// `top`/`left`/`width` are PERCENTAGES of the card, not rem — the card
+// here renders at 432px wide (27rem, so it fits 3-per-screen in the
+// scroller), but the Figma frame this is modeled on is 694px wide, so a
+// straight "Figma px ÷ 16" conversion comes out ~62% too large. Percent
+// sidesteps that: in Figma, take the image's X/Y/W and divide by the
+// *frame's* width (694) or height (517) — e.g. an image at x=140 in a
+// 694-wide frame is `left: '20%'` here, no matter what our card's actual
+// rendered size is.
+import ImageLayer from './ImageLayer.astro'
+import RevealText from '../RevealText.astro'
+import { nbsp } from '../../lib/text'
+import { nonnegative } from 'astro:schema'
+
+// Shared shape for a card's `images` array — every field but `src`/`alt`
+// is optional so you only need to set what differs from ImageLayer's
+// defaults (see ImageLayer.astro for those).
+interface CardImage {
+  src?: string
+  aspect?: string
+  width?: string
+  top?: string
+  left?: string
+  rotate?: number
+  hoverX?: string
+  hoverY?: string
+  hoverRotate?: number
+  hoverScale?: number
+  shadow?: boolean
+  radius?: string
+}
+
+const projects: {
+  title: string
+  subtitle: string
+  year: string
+  href: string | null
+  bg: string | { src: string; width: string }
+  cursor: string
+  images: CardImage[]
+}[] = [
+  {
+    title: 'Aistio',
+    subtitle: nbsp('Приложение-дневник для арт-терапии'),
+    year: '2026',
+    href: '/work/aistio/',
+    bg: { src: '/images/home/cards/aistio-card-background.png', width: '100%' },
+    cursor: 'view',
+    images: [
+      {
+        src: '/images/home/cards/aistio-screen-1.png',
+        aspect: '151.95/313.29',
+        width: '22.2%',
+        top: '14.57%',
+        left: '12.91%',
+        rotate: 0,
+
+        hoverScale: 0.95 // size on hover (1 = no change)
+      },
+      {
+        src: '/images/home/cards/aistio-screen-2.png',
+        aspect: '151.95/313.29',
+        width: '22%',
+        top: '20.1%',
+        left: '39.07%',
+        rotate: 0,
+
+        hoverScale: 0.95 // size on hover (1 = no change)
+      },
+      {
+        src: '/images/home/cards/aistio-screen-3.png',
+        aspect: '151.95/313.29',
+        width: '22%',
+        top: '28.91%',
+        left: '65.85%',
+        rotate: 0,
+
+        hoverScale: 0.95 // size on hover (1 = no change)
+      }
+    ]
+  },
+  {
+    title: 'Easy, buddy',
+    subtitle: nbsp('Онлайн-платформа для иностранных студентов Вышки'),
+    year: '2025',
+    href: '/work/easy-buddy/',
+    bg: { src: '/images/home/cards/buddy-card-background.png', width: '100%' },
+    cursor: 'view',
+    images: [
+      {
+        src: '/images/home/cards/buddy-main-screen-2.png',
+        aspect: '200.27/408.28',
+        width: '28.86%',
+        top: '14.15%',
+        left: '25.39%',
+        rotate: 0,
+        shadow: false, // this export already has its own shadow baked in
+
+        hoverScale: 0.95 // size on hover (1 = no change)
+      },
+
+      {
+        src: '/images/home/cards/buddy-main-screen-1.png',
+        aspect: '200.27/408.28',
+        width: '28.86%',
+        top: '6.94%',
+        left: '45.7%',
+        rotate: 0,
+        shadow: false,
+
+        hoverScale: 0.95 // size on hover (1 = no change)
+      },
+      {
+        src: '/images/home/cards/buddy-main-student-1.png',
+        aspect: '116/110.22',
+        width: '16.71%',
+        top: '8.5%',
+        left: '79.7%',
+        rotate: 19.94,
+        shadow: false,
+        radius: '0', // this export already has its own rounded corners baked in
+
+        hoverRotate: 24,
+        hoverScale: 0.95
+      },
+      {
+        src: '/images/home/cards/buddy-main-student-2.png',
+        aspect: '123.35/117.2',
+        width: '17.77%',
+        top: '71.32%',
+        left: '15.2%',
+        rotate: 10.25,
+        shadow: false,
+        radius: '0',
+
+        hoverRotate: 7.25,
+        hoverScale: 0.95
+      },
+      {
+        src: '/images/home/cards/buddy-main-student-3.png',
+        aspect: '110.69/105.17',
+        width: '15.95%',
+        top: '80.63%',
+        left: '3.94%',
+        rotate: -20.92,
+        shadow: false,
+        radius: '0',
+
+        hoverRotate: -24.92,
+        hoverScale: 0.95
+      }
+    ]
+  },
+  {
+    title: 'Медведиум',
+    subtitle: nbsp('Приложение-друг для вашего ребёнка'),
+    year: '2024',
+    href: '/work/medvedium/',
+    bg: {
+      src: '/images/home/cards/medvedium-card-background.png',
+      width: '100%'
+    },
+    cursor: 'view',
+    images: [
+      {
+        src: '/images/home/cards/medvedium-main-spaceship.png',
+        aspect: '100/100',
+        width: '14.26%',
+        top: '29.97%',
+        left: '1.63%',
+        rotate: -56.6,
+        shadow: false,
+
+        hoverRotate: -48.6,
+        hoverScale: 0.95
+      },
+      {
+        src: '/images/home/cards/medvedium-main-flower.png',
+        aspect: '100/100',
+        width: '14.26%',
+        top: '41.15%',
+        left: '87.02%',
+        rotate: -8.56,
+        shadow: false,
+
+        hoverRotate: -18.56,
+        hoverScale: 0.95
+      },
+      {
+        src: '/images/home/cards/medvedium-main-medal.png',
+        aspect: '100/100',
+        width: '14.26%',
+        top: '75.6%',
+        left: '2.64%',
+        rotate: 14.55,
+        shadow: false,
+
+        hoverRotate: 19.55,
+        hoverScale: 0.95
+      },
+
+      {
+        src: '/images/home/cards/medvedium-main-screen-3.png',
+        aspect: '172/365',
+        width: '23.75%',
+        top: '17.6%',
+        left: '60.3%',
+        rotate: 15,
+        shadow: false,
+
+        hoverScale: 0.95
+      },
+      {
+        src: '/images/home/cards/medvedium-main-screen-2.png',
+        aspect: '172/365',
+        width: '23.75%',
+        top: '14.7%',
+        left: '37.77%',
+        rotate: 0,
+        shadow: false,
+
+        hoverScale: 0.95
+      },
+      {
+        src: '/images/home/cards/medvedium-main-screen-1.png',
+        aspect: '172/365',
+        width: '23.75%',
+        top: '17.6%',
+        left: '16.3%',
+        rotate: -15,
+        shadow: false,
+
+        hoverScale: 0.95
+      }
+    ]
+  },
+  {
+    title: 'Skincore',
+    subtitle: nbsp('Медиа-ресурс об уходе за кожей'),
+    year: '2023',
+    href: null,
+    bg: {
+      src: '/images/home/cards/skincore-card-background.png',
+      width: '100%'
+    },
+    cursor: 'soon',
+    images: [
+      {
+        src: '/images/home/cards/skincore-main-circle.svg',
+        aspect: '30/30',
+        width: '2.87%',
+        top: '3.85%',
+        left: '22.49%',
+        rotate: 0,
+        shadow: false,
+
+        hoverX: '-0.75rem',
+        hoverY: '-0.5rem',
+        hoverScale: 0.9
+      },
+      {
+        src: '/images/home/cards/skincore-main-circle.svg',
+        aspect: '30/30',
+        width: '2.87%',
+        top: '92.75%',
+        left: '51.49%',
+        rotate: 0,
+        shadow: false,
+
+        hoverX: '+0.75rem',
+        hoverY: '+0.5rem',
+        hoverScale: 0.9
+      },
+      {
+        src: '/images/home/cards/skincore-main-circle.svg',
+        aspect: '30/30',
+        width: '2.87%',
+        top: '3.65%',
+        left: '90.4%',
+        rotate: 0,
+        shadow: false,
+
+        hoverX: '+0.75rem',
+        hoverY: '-0.5rem',
+        hoverScale: 0.9
+      },
+      {
+        src: '/images/home/cards/skincore-main-circle.svg',
+        aspect: '30/30',
+        width: '2.87%',
+        top: '29.7%',
+        left: '3.4%',
+        rotate: 0,
+        shadow: false,
+
+        hoverX: '-0.75rem',
+        hoverY: '+0.5rem',
+        hoverScale: 0.9
+      },
+      {
+        src: '/images/home/cards/skincore-main-circle.svg',
+        aspect: '30/30',
+        width: '2.87%',
+        top: '48%',
+        left: '12.2%',
+        rotate: 0,
+        shadow: false,
+
+        hoverX: '-0.75rem',
+        hoverY: '+0.5rem',
+        hoverScale: 0.9
+      },
+      {
+        src: '/images/home/cards/skincore-main-circle.svg',
+        aspect: '30/30',
+        width: '2.87%',
+        top: '36%',
+        left: '85%',
+        rotate: 0,
+        shadow: false,
+
+        hoverX: '+0.75rem',
+        hoverY: '-0.5rem',
+        hoverScale: 0.9
+      },
+      {
+        src: '/images/home/cards/skincore-main-circle.svg',
+        aspect: '30/30',
+        width: '2.87%',
+        top: '78%',
+        left: '5%',
+        rotate: 0,
+        shadow: false,
+
+        hoverX: '-0.75rem',
+        hoverY: '+0.5rem',
+        hoverScale: 0.9
+      },
+      {
+        src: '/images/home/cards/skincore-main-circle.svg',
+        aspect: '30/30',
+        width: '2.87%',
+        top: '60%',
+        left: '80%',
+        rotate: 0,
+        shadow: false,
+
+        hoverX: '+0.75rem',
+        hoverY: '+0.5rem',
+        hoverScale: 0.9
+      },
+      {
+        src: '/images/home/cards/skincore-main-circle.svg',
+        aspect: '30/30',
+        width: '2.87%',
+        top: '80%',
+        left: '88%',
+        rotate: 0,
+        shadow: false,
+
+        hoverX: '+0.75rem',
+        hoverY: '+0.5rem',
+        hoverScale: 0.9
+      },
+      {
+        src: '/images/home/cards/skincore-main-screen-1.png',
+        aspect: '190.98/385.89',
+        width: '27.52%',
+        top: '8.85%',
+        left: '24.74%',
+        rotate: 0,
+        shadow: false,
+
+        hoverScale: 0.95
+      },
+
+      {
+        src: '/images/home/cards/skincore-main-screen-2.png',
+        aspect: '190.98/385.89',
+        width: '27.52%',
+        top: '16.82%',
+        left: '47.81%',
+        rotate: 0,
+        shadow: false,
+
+        hoverScale: 0.95
+      },
+      {
+        src: '/images/home/cards/skincore-main-tag-1.svg',
+        aspect: '58.39/24.52',
+        width: '8.41%',
+        top: '58.52%',
+        left: '88.1%',
+        rotate: 0,
+        shadow: false
+      },
+      {
+        src: '/images/home/cards/skincore-main-tag-2.svg',
+        aspect: '58.39/24.52',
+        width: '8.41%',
+        top: '84.97%',
+        left: '15.75%',
+        rotate: 0,
+        shadow: false
+      },
+      {
+        src: '/images/home/cards/skincore-main-tag-3.svg',
+        aspect: '90.39/24.52',
+        width: '13.02%',
+        top: '11.65%',
+        left: '76.22%',
+        rotate: 0,
+        shadow: false
+      },
+      {
+        src: '/images/home/cards/skincore-main-tag-4.svg',
+        aspect: '99.39/24.52',
+        width: '14.32%',
+        top: '36.67%',
+        left: '8.4%',
+        rotate: 0,
+        shadow: false
+      }
+    ]
+  }
+]
+---
+
+<section id="work" class="pb-[4.5rem]">
+  <div class="flex flex-col gap-[0.75rem] px-[3.25rem]">
+    <RevealText
+      text={nbsp('я рада, что стала частью этих проектов')}
+      as="p"
+      class="text-[1.25rem] uppercase leading-[1.12] text-[#cdcbcb]"
+    />
+    <RevealText
+      text={nbsp(
+        'Мы исследовали пользователей, придумывали айдентику и проектировали интерфейс'
+      )}
+      as="h2"
+      class="max-w-[36rem] text-[1.5rem] leading-[1.12] text-[#585454]"
+    />
+  </div>
+
+  {
+    /* Two-row, two-column grid — the 4 cards fill the page width in pairs.
+      At the 1512px reference (52px margins, 20px gutter) each card lands
+      at exactly 694px, matching the Figma card frame 1:1 — that's also
+      why ImageLayer's percentage-based positioning still lines up (see
+      ImageLayer.astro). */
+  }
+  <div
+    class="mt-[2.25rem] grid grid-cols-2 gap-x-[1.25rem] gap-y-[1.25rem] px-[3.25rem]"
+  >
+    {
+      projects.map((project, i) => {
+        const Tag = project.href ? 'a' : 'div'
+        // `bg` can be a plain color string ("#ace5ec") or an image object
+        // ({ src: "/images/..." }) — swap between them freely per project.
+        const bgStyle =
+          typeof project.bg === 'string'
+            ? { backgroundColor: project.bg }
+            : {
+                backgroundImage: `url(${project.bg.src})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }
+        return (
+          <Tag
+            href={project.href ?? undefined}
+            class="featured-card group flex flex-col gap-[1.25rem]"
+            data-cursor={project.cursor}
+            data-cursor-label={project.cursor === 'soon' ? 'скоро' : undefined}
+            data-reveal
+            data-reveal-delay={i * 80}
+          >
+            <div
+              class="relative aspect-[694/517] w-full overflow-hidden rounded-[2.25rem]"
+              style={bgStyle}
+            >
+              <div class="absolute left-[1.75rem] top-[1.75rem] rounded-[3.75rem] bg-white/80 px-[1.25rem] py-[0.75rem] text-[1.125rem] leading-[1.12] text-[#585454]">
+                {project.year}
+              </div>
+
+              {project.images.map((image) => (
+                <ImageLayer
+                  src={image.src}
+                  aspect={image.aspect}
+                  width={image.width}
+                  top={image.top}
+                  left={image.left}
+                  rotate={image.rotate}
+                  hoverX={image.hoverX}
+                  hoverY={image.hoverY}
+                  hoverRotate={image.hoverRotate}
+                  hoverScale={image.hoverScale}
+                  shadow={image.shadow}
+                  radius={image.radius}
+                  alt={`${project.title} — экран приложения`}
+                />
+              ))}
+            </div>
+            <div class="flex flex-col gap-[0.75rem]">
+              <p class="text-[2rem] font-semibold leading-[1.12] text-[#252322] sm:text-[3rem]">
+                {project.title}
+              </p>
+              <p class="text-[1.5rem] leading-[1.12] text-[#aaa7a7]">
+                {project.subtitle}
+              </p>
+            </div>
+          </Tag>
+        )
+      })
+    }
+  </div>
+</section>

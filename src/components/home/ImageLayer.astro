@@ -1,0 +1,114 @@
+---
+// A single freely-positioned image inside a project card (see
+// FeaturedProjects.astro) — replaces the old iPhone-bezel PhoneMockup.
+// No flex row, no auto-centering: you place each image with `top`/`left`/
+// `width` — any valid CSS length works (`top`/`left` resolve against the
+// card's own height/width, so a plain percentage is the easiest thing to
+// hand-compute from Figma: image X ÷ frame width, image Y ÷ frame height).
+// Give it a resting `rotate`, and describe where it should move to on
+// hover with `hoverX`/`hoverY`/`hoverRotate`/`hoverScale`. The card that
+// contains these (`.featured-card` in FeaturedProjects.astro) already
+// carries Tailwind's `group` class, so hovering anywhere on the card
+// animates every image inside it at once — nothing per-image to wire up
+// beyond the props below.
+//
+// `shadow` (default true) adds a CSS drop-shadow behind the image. Turn
+// it off for assets that already have their own shadow baked in (common
+// with Figma exports that include the shadow effect in the export bounds)
+// — otherwise you get two shadows stacked, and the extra transparent
+// margin the baked-in one needs makes the artwork look smaller than the
+// box you gave it.
+//
+// `radius` (default "1rem") is a fixed CSS length, not proportional to
+// the image's own size — fine for the bigger phone screenshots, but on a
+// small image (a sticker at ~15% card width, say) it can end up reading
+// bigger than corners the artwork already has baked in, which themselves
+// shrink along with the image. Set `radius="0"` for assets like that
+// (same idea as `shadow`) rather than fighting to match the baked-in
+// radius exactly.
+interface Props {
+  src?: string;
+  alt?: string;
+  width?: string; // any CSS length, e.g. "22%" or "12rem"
+  aspect?: string; // CSS aspect-ratio, e.g. "3/4"
+  top?: string; // any CSS length, from the card's top edge (% resolves against card height)
+  left?: string; // any CSS length, from the card's left edge (% resolves against card width)
+  rotate?: number; // degrees, resting state
+  hoverX?: string; // rem, extra translate added on hover
+  hoverY?: string; // rem
+  hoverRotate?: number; // degrees, replaces `rotate` on hover
+  hoverScale?: number;
+  shadow?: boolean; // false if the image already has its own baked-in shadow
+  radius?: string; // CSS length; "0" if the image already has its own baked-in rounding
+  class?: string;
+}
+
+const {
+  src,
+  alt = "",
+  width = "12rem",
+  aspect = "3/4",
+  top = "0rem",
+  left = "0rem",
+  rotate = 0,
+  hoverX = "0rem",
+  hoverY = "0rem",
+  hoverRotate = rotate,
+  hoverScale = 1.05,
+  shadow = true,
+  radius = "1rem",
+  class: className = "",
+} = Astro.props;
+---
+
+<div
+  class:list={["image-layer", className]}
+  style={{
+    "--w": width,
+    "--aspect": aspect,
+    "--top": top,
+    "--left": left,
+    "--rot": `${rotate}deg`,
+    "--hx": hoverX,
+    "--hy": hoverY,
+    "--hrot": `${hoverRotate}deg`,
+    "--hscale": hoverScale,
+    "--radius": radius,
+  }}
+>
+  {
+    src ? (
+      <img
+        src={src}
+        alt={alt}
+        class:list={["image-layer-img h-full w-full object-cover", shadow && "shadow-[0_0.5rem_1.5rem_rgba(0,0,0,0.25)]"]}
+      />
+    ) : (
+      <div class="image-layer-img flex h-full w-full items-center justify-center border border-dashed border-black/20 bg-black/5 p-[0.5rem] text-center text-[0.625rem] leading-[1.2] text-black/40">
+        добавьте изображение
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .image-layer {
+    position: absolute;
+    top: var(--top);
+    left: var(--left);
+    width: var(--w);
+    aspect-ratio: var(--aspect);
+    transform: translate(0, 0) rotate(var(--rot)) scale(1);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .image-layer-img {
+    border-radius: var(--radius);
+  }
+
+  /* .featured-card carries Tailwind's `group` class — hovering it drives
+     every image inside toward its hover* values at once. */
+  :global(.group:hover) .image-layer {
+    transform: translate(var(--hx), var(--hy)) rotate(var(--hrot)) scale(var(--hscale));
+  }
+</style>

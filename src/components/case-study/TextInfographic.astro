@@ -1,0 +1,62 @@
+---
+// Case study "TextWithInfographics" frame: a paragraph of text + an
+// optional accompanying image/table/stat-box ("infographic"), 36px
+// (2.25rem) apart. Pass `text` for the common case (plain nbsp'd body
+// copy, line-by-line reveal); use the default slot instead for anything
+// more custom (a numbered list, a two-column meta row, etc). The
+// `infographic` slot's direct child should carry `data-reveal="scale"`
+// (see ScrollReveal.astro) for the scale-in-on-scroll treatment.
+//
+// Body text is capped at 43.375rem — 6 of the content column's 9 grid
+// columns (99px/column, 20px gutters), not the full column width.
+//
+// `links`: forwarded to RevealText — turn specific words in `text` into
+// external links (see RevealText.astro for the matching/styling rules).
+//
+// Multiple paragraphs in one `text` string, separated by a blank line
+// (like Figma's own multi-paragraph text blocks), render as real gaps.
+// This *has* to split into genuinely separate <RevealText> blocks, one
+// per paragraph, rather than just preserving the blank line via CSS
+// (`white-space: pre-line`) on one shared block — that looked right at
+// first, but RevealText's `unit="line"` reveal groups words by their
+// rendered line, one entry per `.reveal-word` span; a "word" straddling
+// a paragraph break (nothing but a blank line between it and the next
+// one, no literal space to split on) becomes one merged, multi-line span
+// with a single line-position, which corrupts that grouping — words
+// further down the paragraph can reveal before ones above them, so the
+// text visibly renders out of order while scrolled partway through. A
+// single-paragraph `text` (the common case) still renders as exactly
+// one RevealText, unchanged.
+import RevealText from "../RevealText.astro";
+import { nbsp } from "../../lib/text";
+
+interface Props {
+  text?: string;
+  links?: { text: string; href: string }[];
+}
+const { text, links } = Astro.props;
+const paragraphs = text
+  ?.split(/\n\s*\n/)
+  .map((p) => p.trim())
+  .filter(Boolean);
+---
+
+<div class="flex flex-col gap-[2.25rem]">
+  {
+    paragraphs ? (
+      <div class="flex flex-col gap-[1.5rem]">
+        {paragraphs.map((p) => (
+          <RevealText
+            text={nbsp(p)}
+            unit="line"
+            links={links}
+            class="max-w-[43.375rem] text-[1.25rem] leading-[1.12] text-[#585454]"
+          />
+        ))}
+      </div>
+    ) : (
+      <slot />
+    )
+  }
+  <slot name="infographic" />
+</div>

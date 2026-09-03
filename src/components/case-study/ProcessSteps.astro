@@ -1,0 +1,64 @@
+---
+// A white "infographic" panel for a numbered process (Easy Buddy's
+// "как выглядел процесс обработки анкет") with an optional second,
+// unnumbered grid below it for follow-up findings (its "недостатки
+// текущего процесса") — same panel, split by a divider, mirroring
+// StatsBox's цель/выборка-then-findings shape but as grids instead of
+// arrow-rows.
+//
+// Both grids share one card shape: an optional big number (Manrope
+// SemiBold 64px/112%, same style as StatsBox's `percent` and the
+// "задача проекта" quote heading), a heading (H4: SemiBold 24px/112%,
+// grey primary), and a description (regular body, grey primary) below
+// it. Omit `number` on an item for the unnumbered look (used for
+// `issues`). 3 per row, wrapping naturally (5 steps read as 3+2).
+import RevealText from "../RevealText.astro";
+import { nbsp } from "../../lib/text";
+
+interface Item {
+  number?: string;
+  heading: string;
+  description: string;
+}
+interface Props {
+  stepsLabel: string;
+  steps: Item[];
+  issuesLabel: string;
+  issues: Item[];
+}
+const { stepsLabel, steps, issuesLabel, issues } = Astro.props;
+---
+
+<div data-reveal="scale" class="flex flex-col gap-[2.5rem] rounded-[2.25rem] bg-white p-[2.5rem]">
+  <div class="flex flex-col gap-[2rem]">
+    <p class="text-[1rem] uppercase leading-[1.12] text-[#aaa7a7]">{nbsp(stepsLabel)}</p>
+    <div class="grid grid-cols-1 gap-x-[1.25rem] gap-y-[2rem] sm:grid-cols-3">
+      {
+        steps.map((item) => (
+          <div class="flex flex-col gap-[0.625rem]">
+            {item.number && <p class="text-[4rem] font-semibold leading-[1.12] text-[#252322]">{item.number}</p>}
+            <p class="text-[1.5rem] font-semibold leading-[1.12] text-[#252322]">{nbsp(item.heading)}</p>
+            <RevealText text={nbsp(item.description)} unit="line" class="text-[1.25rem] leading-[1.12] text-[#585454]" />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="h-px w-full bg-black/10" />
+
+  <div class="flex flex-col gap-[2rem]">
+    <p class="text-[1rem] uppercase leading-[1.12] text-[#aaa7a7]">{nbsp(issuesLabel)}</p>
+    <div class="grid grid-cols-1 gap-x-[1.25rem] gap-y-[2rem] sm:grid-cols-3">
+      {
+        issues.map((item) => (
+          <div class="flex flex-col gap-[0.625rem]">
+            {item.number && <p class="text-[4rem] font-semibold leading-[1.12] text-[#252322]">{item.number}</p>}
+            <p class="text-[1.5rem] font-semibold leading-[1.12] text-[#252322]">{nbsp(item.heading)}</p>
+            <RevealText text={nbsp(item.description)} unit="line" class="text-[1.25rem] leading-[1.12] text-[#585454]" />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

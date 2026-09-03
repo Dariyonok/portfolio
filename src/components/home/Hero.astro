@@ -1,0 +1,46 @@
+---
+import RevealText from '../RevealText.astro'
+import { nbsp } from '../../lib/text'
+---
+
+<section
+  class="flex min-h-[85vh] flex-col justify-center px-[3.25rem] py-[3rem]"
+>
+  <div
+    class="flex flex-col items-start justify-between gap-[2.5rem] lg:flex-row lg:items-end"
+  >
+    <div class="flex flex-col gap-[3.25rem]">
+      <h1
+        class="text-[3rem] font-semibold uppercase leading-[1.04] text-[#252322] sm:text-[4.5rem] lg:text-[6rem]"
+      >
+        <RevealText
+          text="Здравствуйте!"
+          as="span"
+          class="block"
+          trigger="load"
+          wordDelay={45}
+        />
+        <RevealText
+          text="Меня зовут Дария"
+          as="span"
+          class="block"
+          trigger="load"
+          wordDelay={45}
+          startDelay={45}
+        />
+      </h1>
+      <p class="flex items-center gap-[0.5rem] text-[1.125rem] text-[#cdcbcb]">
+        <span aria-hidden="true">📍</span> {nbsp('Казань/Москва, Россия')}
+      </p>
+    </div>
+
+    <RevealText
+      text={nbsp('Я — дизайнер интерфейсов, погружаюсь в продуктовый дизайн и изучаю, как проектировать полезные и удобные цифровые продукты')}
+      as="p"
+      class="max-w-[43.375rem] text-[1.5rem] leading-[1.12] text-[#585454]"
+      trigger="load"
+      wordDelay={30}
+      startDelay={200}
+    />
+  </div>
+</section>

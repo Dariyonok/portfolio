@@ -1,0 +1,566 @@
+---
+// Easy, buddy — case study. Hero only for now, following the same
+// structure as medvedium.astro (the pattern page) — rest of the sections
+// (About/Research/Interface/Identity/Conclusion) still need real source
+// content before they can be built the same way Медведиум's were, from
+// PDF exports.
+//
+// `description` reuses the subtitle already established on the homepage
+// card (see FeaturedProjects.astro) — real, not placeholder, copy.
+// `tags` is left empty on purpose: Медведиум's came straight from its
+// PDF brief ("количественное исследование" etc.), and there's no
+// equivalent source for this project yet — fill in real ones here
+// whenever you have them, same shape as medvedium.astro's.
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import CaseHero from '../../components/case-study/CaseHero.astro'
+import RevealText from '../../components/RevealText.astro'
+import SideNav from '../../components/case-study/SideNav.astro'
+import Section from '../../components/case-study/Section.astro'
+import ParagraphBlock from '../../components/case-study/ParagraphBlock.astro'
+import TextInfographic from '../../components/case-study/TextInfographic.astro'
+import InfographicFrame from '../../components/case-study/InfographicFrame.astro'
+import ImagePlaceholder from '../../components/case-study/ImagePlaceholder.astro'
+import AwardsList from '../../components/case-study/AwardsList.astro'
+import MetaRow from '../../components/case-study/MetaRow.astro'
+import StatsBox from '../../components/case-study/StatsBox.astro'
+import ProcessSteps from '../../components/case-study/ProcessSteps.astro'
+import IconCards from '../../components/case-study/IconCards.astro'
+import CompetitorCards from '../../components/case-study/CompetitorCards.astro'
+import { nbsp } from '../../lib/text'
+
+const navItems = [
+  { label: 'О проекте', href: '#about-project' },
+  { label: 'Исследование', href: '#research' },
+  { label: 'Интерфейс', href: '#interface' },
+  { label: 'Тестирование', href: '#testing' },
+  { label: 'Разработка фирменного стиля', href: '#identity' },
+  { label: 'Заключение', href: '#conclusion' }
+]
+
+const myRoleTasks = [
+  'Провела опрос, участвовала в проведении глубинных интервью и тестирования интерфейса, анализировала результаты',
+  'Спроектировала юзерфлоу сервиса, собрала раздел с обсуждениями, экраны обмена анкетами и редактирования статьи в интерфейсе администратора',
+  'Собрала дизайн-систему и перенесла компоненты в код',
+  'Собрала основные механики сервиса на моковых данных с помощью Ruby on Rails',
+  'Участвовала в разработке айдентики и дизайне носителей'
+]
+---
+
+<BaseLayout
+  title="Easy, buddy:)"
+  description="Онлайн-платформа для иностранных студентов Вышки."
+  headerSticky={false}
+  footerCTA={false}
+>
+  <CaseHero
+    title="easy, buddy"
+    description="онлайн-платформа для иностранных студентов вышки"
+    tags={[
+      'количественное исследование',
+      'прототипирование',
+      'тестирование',
+      'айдентика',
+      'дизайн-система'
+    ]}
+    year="2025"
+    imageSrc="/images/projects/buddy/buddy-case-image-1.jpg"
+  />
+
+  <div class="flex items-start gap-[1.25rem] px-[3.25rem] pb-[7.5rem]">
+    <SideNav items={navItems} />
+
+    <div class="min-w-0 flex-1">
+      <Section id="about-project" title="о проекте">
+        <ParagraphBlock heading="про продукт">
+          <TextInfographic
+            text="Easy, buddy:) — веб-платформа для иностранных студентов Вышки и их бадди — местных студентов-волонтёров, помогающих иностранцам. Сервис предоставляет статьи с важной информацией, обсуждения, где можно задать интересующий вопрос, а также обеспечивает процесс обмена анкетами между студентами и бадди."
+          />
+          <MetaRow
+            fields={[
+              { label: 'моя роль:', values: ['UX/UI дизайнер, разработчик'] },
+              { label: 'период:', values: ['сент. 2024 – июнь 2025'] },
+              {
+                label: 'команда:',
+                values: ['Полина Ефимова', 'Нарыйаана Парникова']
+              }
+            ]}
+          />
+        </ParagraphBlock>
+        <ParagraphBlock heading="моя роль">
+          <TextInfographic>
+            <ol class="flex max-w-[43.375rem] flex-col gap-[1rem]">
+              {
+                myRoleTasks.map((task, i) => (
+                  <li class="flex gap-[1rem]">
+                    <span class="text-[1.25rem] leading-[1.12] text-[#cdcbcb]">
+                      {i + 1}.
+                    </span>
+                    <RevealText
+                      text={nbsp(task)}
+                      class="text-[1.25rem] leading-[1.12] text-[#585454]"
+                    />
+                  </li>
+                ))
+              }
+            </ol>
+
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-2.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="задача проекта">
+          <TextInfographic>
+            <div class="flex flex-col gap-[2rem]">
+              {
+                /* Manrope SemiBold 64px/112% — same style as the stat percentages in StatsBox.astro. */
+              }
+              <RevealText
+                text={nbsp(
+                  'упростить процесс адаптации иностранных студентов, учащихся в нашем университете'
+                )}
+                as="h3"
+                class="text-[4rem] font-semibold uppercase leading-[1.12] text-[#252322]"
+              />
+              <RevealText
+                text={nbsp(
+                  'Одной из главных целей было усовершенствовать текущий процесс поиска бадди, которые могли бы помочь иностранному студенту. Результатом стал медиа-сервис, где студенты могут получить совет и поддержку, найти актуальную информацию и быть прикреплённым к бадди — студенту-волонтёру, который поможет с срочными вопросами.'
+                )}
+                unit="line"
+                class="max-w-[43.375rem] text-[1.25rem] leading-[1.12] text-[#585454]"
+              />
+            </div>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+      <Section id="research" title="исследование">
+        <ParagraphBlock heading="исследование пользователей">
+          <TextInfographic
+            text="По данным за 2024 год в Вышке учится около 4800 иностранных студентов и каждый год число растёт. Мы неоднократно видели, как наши одногруппники и друзья чувствовали себя потерянными из-за переезда, нового учебного процесса и постоянных вопросов с документами. Перед началом работы над проектом мы подумали: как можно сделать процесс адаптации и жизнь в России более комфортной для этих людей? В Вышке действует программа помощи иностранным студентам — Buddy Programme, где каждый иностранец, приезжающий учиться, может подать заявку и получить помощь от бадди — студента-волонтёра, который сможет его встретить, помочь заселиться в общежитие, разобраться с документами и просто освоиться на новом месте. Мы предположили, что и у иностранных студентов, и у  их бадди найдутся сложности, которыми они захотят поделиться, поэтому провели количественный опрос и глубинные интервью."
+          >
+            <Fragment slot="infographic">
+              <StatsBox
+                goalLabel="цель:"
+                goal="Выявить проблемы, с которыми сталкиваются иностранные студенты и бадди"
+                sampleLabel="выборка:"
+                sample="количественный опрос на 37 человек и 6 глубинных интервью. Мы искали респондентов в чатах иностранных студентов и бадди, а также среди знакомых иностранцев, учащихся с нами"
+                stats={[
+                  {
+                    heading: 'Мне сложно привыкнуть к новой стране',
+                    description:
+                      'Студент: «Всё выглядит незнакомым и чужим, я не знаю, куда идти и что делать»',
+                    insightHeading: 'Комплексная адаптация',
+                    insight:
+                      '«Easy, buddy:)» объединяет поиск бадди, важные дедлайны, полезные советы и общение с другими студентами. Это экономит время, снижает стресс и упрощает адаптацию'
+                  },
+                  {
+                    heading: 'Я боюсь, что не найду друзей и буду одинок',
+                    description:
+                      'Студент «...вдруг я не смогу социализироваться в университете и мне будет одиноко?»',
+                    insightHeading: 'Комьюнити и поддержка',
+                    insight:
+                      'Обсуждения и статьи создают ощущение принадлежности. Студент понимает: он не один и ему есть, куда обратиться. Контент тщательно модерируется, чтобы не допустить разжигания ненависти'
+                  },
+                  {
+                    heading: 'Текущий процесс подбора студентов сложный',
+                    description:
+                      'Бадди: «Бывает так, что одна анкета отправляется несколько раз и одного студента выбирают сразу несколько бадди, потом приходится выяснять, кто был первый...»',
+                    insightHeading: 'Быстрый мэтчинг',
+                    insight:
+                      'Автоматическая проверка дублирующихся анкет и вывод зарезервированных анкет из общего пула, чтобы каждый студент имел шанс получить бадди'
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="целевая аудитория">
+          <TextInfographic
+            text="На основе опроса мы выделили три сегмента аудитории, которым было бы интересно наше приложение"
+          >
+            <Fragment slot="infographic">
+              {
+                /* Placeholder text — real title/сложности/цель copy to come later; the shape (3 cards, name + difficulties + goal) is what matters for now. */
+              }
+              <IconCards
+                cards={[
+                  {
+                    name: 'Иностранные абитуриенты',
+                    difficulties:
+                      ' теряются в огромном количестве информации, переживают из-за поступления',
+                    goal: 'переехать в новую страну для учёбы и не запутаться  в правилах и бумагах',
+                    icon: '/images/projects/buddy/buddy-case-audience-1.png'
+                  },
+                  {
+                    name: 'Иностранные студенты',
+                    difficulties:
+                      'процесс адаптации к новым условиям у многих протекает тяжело',
+                    goal: 'привыкнуть к учёбе в другой стране и получать удовольствие от студенческой жизни',
+                    icon: '/images/projects/buddy/buddy-case-audience-2.png'
+                  },
+                  {
+                    name: 'студенты-волонтёры и бадди',
+                    difficulties: 'процесс отбора студентов долгий и неудобный',
+                    goal: 'выбрать подопечных студентов и эффективно им помогать в течение всего учебного года',
+                    icon: '/images/projects/buddy/buddy-case-audience-3.png'
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+      <Section id="interface" title="интерфейс">
+        <ParagraphBlock heading="юзерфлоу проекта">
+          <TextInfographic
+            text="На этапе исследования мы разобрались, как работает бадди-программа и как сейчас обрабатываются анкеты и как происходит подбор бадди студентам."
+          >
+            <Fragment slot="infographic">
+              <ProcessSteps
+                stepsLabel="как выглядел процесс обработки анкет:"
+                steps={[
+                  {
+                    number: '1.',
+                    heading: 'Студент заполняет анкеты',
+                    description:
+                      'Студент заполняет базовую информацию о себе, а также время и дату прибытия в Россию'
+                  },
+                  {
+                    number: '2.',
+                    heading: 'Анкеты попадают в телеграм-бот',
+                    description:
+                      'Все анкеты публикуются в боте по мере их поступления. Бот отправляет сообщения подписанным бадди'
+                  },
+                  {
+                    number: '3.',
+                    heading: 'Бадди выбирают студентов',
+                    description:
+                      'Бадди нужно написать свои имя и фамилию под постом с анкетой. Кто напишет первый — за тем и закрепляется студент'
+                  },
+                  {
+                    number: '4.',
+                    heading: 'Бадди получает контакты студента',
+                    description:
+                      'Контакты обычно отправляются старшими бадди, у которых есть доступ к боту. Они отправляют данные в личные сообщения бадди'
+                  },
+                  {
+                    number: '5.',
+                    heading: 'Бадди пишет студенту',
+                    description:
+                      'Получив контакты, бадди пишет студенту и знакомится, а потом узнаёт, с чем ему требуется помощь'
+                  }
+                ]}
+                issuesLabel="недостатки текущего процесса:"
+                issues={[
+                  {
+                    heading: 'Засорённая лента анкет',
+                    description:
+                      'Анкеты студентов, которым уже подобрали бадди, оставались в ленте бота, из-за чего студенты, которым всё ещё нужна была помощь, терялись среди всех анкет и оставались без бадди'
+                  },
+                  {
+                    heading: 'Многоступенчатость',
+                    description:
+                      'Контакты студентов можно получить только после одобрения заявки старшими бадди. Это безопасно и конфиденциально, но процесс можно было оптимизировать'
+                  },
+                  {
+                    heading: 'Дублирующиеся анкеты',
+                    description:
+                      'Иногда одна и та же анкета приходила 2-3 раза, из-за чего под одной анкетой подписывались несколько бадди и приходилось выяснять, кто же был первый'
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+          <TextInfographic
+            text="Эти проблемы привели нас к идее сервиса с тремя ролями: студент (создание анкеты), бадди (отбор анкет) и администратор (дополнительный контроль обмена анкетами и модерация контента). Я создала юзерфлоу, где расписаны действия каждого пользователя."
+            links={[{ text: 'юзерфлоу', href: 'https://clck.ru/3EHTUE' }]}
+          />
+        </ParagraphBlock>
+        <ParagraphBlock heading="регистрация на платформе">
+          <TextInfographic
+            text="Основной язык сайта — анлийский, поскольку на этом языке происходит почти вся коммуникация между иностранными студентами и бадди. При желании, можно переключиться на русский. При регистрации требуется указать личные данные, а также выбрать роль — бадди или студент. Администратор заходит по отдельному логину и паролю."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-3.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="поиск нужной информации">
+          <TextInfographic
+            text="Разделы «Tips&Tricks» (анкеты) и «Discussions» (обсуждения) выглядят одинаково и для бадди, и для иностранных студентов и доступны им для использования. Студенты и бадди посещают эти разделы, чтобы искать и делиться информацией. Весь контент можно  фильтровать по 4 основным темам — «учёба», «документы», «культура» и «повседневность». Содержание статей модерируется и редактируется администратором, там лежит только проверенная информация из официальных источников."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-4.png"
+                alt=""
+                class="aspect-[1051/551] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-5.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Обсуждения, в отличие от статей, создаются самими студентами. Здесь можно задавать интересующие их вопросы, а бадди или другие студенты могут на них отвечать."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-6.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-7.png"
+                alt=""
+                class="aspect-[1051/551] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Контент модерируется администраторами, чтобы избежать конфликтов и разжигания ненависти."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-8.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="обмен анкетами и поиск бадди">
+          <TextInfographic
+            text="Процесс обмена анкетами между студентами и бадди начинается с заполнения студентом небольшой формы. От пользователя требуется написать немного о себе, а также указать дату и время прибытия, при их наличии."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-9.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Чтобы избежать дублирующихся анкет, каждый студент может заполнить форму только один раз. После отправки анкету можно обновить в любой момент — страница показывает текущий статус заявки или контакты бадди, если он уже выбрал студента"
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-10.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="В аккаунте бадди в разделе с анкетами видны все анкеты студентов, у которых бадди пока нет. Как только кто-то выбирает студента, анкета пропадает из общего списка и появляется в разделе «мои студенты» в профиле бадди. В данных анкеты также появляются контакты студента, чтобы с ним можно было связаться."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-11.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-12.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="дизайн-система">
+          <TextInfographic
+            text="Для проекта была разработана единая дизайн-система, включающая библиотеку компонентов для трёх разрешений экрана (десктоп, планшет, мобильная версия), стили модульных сеток, цветов и типографики. Это позволило сохранить консистентность интерфейса и быстро перенести компоненты в код."
+            links={[{ text: 'дизайн-система', href: 'https://www.figma.com/design/dSVjJkW60UsAoJ8kZhwfcm/%D0%B1%D0%B0%D0%B4%D0%B4%D0%B8-%D1%81-%D1%87%D0%B8%D1%81%D1%82%D0%BE%D0%B3%D0%BE-%D0%BB%D0%B8%D1%81%D1%82%D0%B0?node-id=434-410&t=cIcZK8nOf6gHUxK9-1' }]}
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-13.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+      <Section id="testing" title="Тестирование">
+        <ParagraphBlock heading="выборка и процесс тестирования">
+          <TextInfographic
+            text="Мы сосредоточились на тестировании интерфейса на иностранных студентах и бадди. Для каждого типа пользователей мы придумали задания, чтобы протестировать сценарии регистрации, создания обсуждения, поиска статьи, заполнения анкеты на бадди (задание для студента) и отбора студентов (задание для бадди).
+
+Пример задания для студента: «Ты хочешь найти информацию относительно того, можно ли брать в общежитие домашних животных. Статей на эту тему нет, поэтому ты решаешь спросить у других студентов, Попробуй сделать это с помощью веб-сервиса»
+
+Пример задания для бадди: «Найди среди анкет анкету студента из Китая, который приезжает утром 28 августа в аэропорт Домодедово и не говорит по-русски. Стань его бадди и убедись, что этот студент теперь точно закреплён за тобой»"
+          >
+            <Fragment slot="infographic">
+              <StatsBox
+                goalLabel="цель:"
+                goal="Проверить логику сценариев и выявить слабые и непонятные места в интерфейсе"
+                sampleLabel="выборка:"
+                sample="Тестирование прошли 3 бадди и 2 иностранных студента. Респондентов искали в чатах иностранных студентов и среди уже участвовавших в исследовании"
+                findingsLabel="инсайты"
+                stats={[
+                  {
+                    heading:
+                      'Не всем комфортно добавлять фотографию профиля сервисе',
+                    description:
+                      'Бадди, к тому же, посчитали, что обязательное добавление фото в анкете вызывает риски предвзятости и дискриминации',
+                    arrowLabel: 'поэтому мы...',
+                    insightHeading:
+                      'Убрали обязательное добавление фотографии при создании аккаунта',
+                    insight:
+                      'Поле «прикрепить фото» теперь не помечается как обязательное'
+                  },
+                  {
+                    heading: 'Бадди не могли найти раздел «мои студенты»',
+                    description:
+                      'Бадди отмечали, что им важно видеть, сколько студентов закреплены за ними и кто из них когда приезжает',
+                    arrowLabel: 'поэтому мы...',
+                    insightHeading:
+                      'Добавили секцию «Мои студенты» в профиль бадди',
+                    insight:
+                      'До тестов эта секция располагалась только в разделе с анкетами, чтобы увидеть студентов, закрепленных за бадди, нужно было настроить фильтрацию с «все анкеты» на «мои студенты»'
+                  },
+                  {
+                    heading: 'Не у всех студентов есть корпоративная почта',
+                    description:
+                      'Для студентов по обмену корпоративные аккаунты не создаются, а при отправке анкеты не было возможности указать дополнительные контакты, поэтому кто-то рисковал остаться без связи с бадди',
+                    arrowLabel: 'поэтому мы...',
+                    insightHeading:
+                      'Добавили дополнительное поле для контактов в анкету и ввели регистрацию по обычной почте',
+                    insight:
+                      'Полей в форме анкеты стало больше, но проблема с отсутствием корпоративной почты решилась'
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+      <Section id="identity" title="Разработка фирменного стиля">
+        <ParagraphBlock heading="Элементы фирменного стиля">
+          <TextInfographic
+            text="Для проекта был разработан фирменный стиль и гайдлайны по его использованию. В айдентике используются три шрифта, четыре основных цвета, каждый в трёх оттенках под каждую категорию вопросов (документы, культура, учёба, жизнь), а также чёрно-белая палитра."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-14.png"
+                alt=""
+                class="aspect-[1051/679] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Логотип — шрифтовая надпись Easy, buddy:) с смайликом-улыбочкой в конце. Логотип подчёркивает лёгкий характер и дружелюбный Tone of Voice бренда."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-15.png"
+                alt=""
+                class="aspect-[1051/405] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Для правильного и комфортного использования элементов фирменного стиля был составлен стайлгайд, в котором раскрыты правила применения шрифтов, цветов и графических элементов."
+            links={[{ text: 'стайлгайд', href: 'https://www.figma.com/proto/dSVjJkW60UsAoJ8kZhwfcm/%D0%B1%D0%B0%D0%B4%D0%B4%D0%B8-%D1%81-%D1%87%D0%B8%D1%81%D1%82%D0%BE%D0%B3%D0%BE-%D0%BB%D0%B8%D1%81%D1%82%D0%B0?node-id=1994-48336&viewport=346%2C68%2C0.04&t=i0vNDTUhnvtxBpxw-1&scaling=scale-down-width&content-scaling=fixed&page-id=1993%3A47883' }]}
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-16.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="Носители фирменного стиля">
+          <TextInfographic>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-17.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-18.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-19.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-20.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-21.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-22.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-23.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/buddy/buddy-case-image-24.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+      <Section id="conclusion" title="Заключение">
+        <ParagraphBlock heading="результаты проекта">
+          <TextInfographic
+            text="В результате работы над проектом мы с командой спроектировали прототип веб-сервиса с 4 ключевыми сценариями для трёх типов пользователей, собрали и перенесли в код дизайн-систему из 120+ компонентов, а также разработали айдентику бренда и гайд по применению фирменного стиля. Проект основан на исследовании с участием 45 пользователей. Помимо проектирования интерфейса я собрала основные механики сервиса на моковых данных с помощью Ruby on Rails."
+          />
+          <TextInfographic
+            text="Исходный код, прототипы, гайдлайны по использованию фирменного стиля и соцсети переданы совету иностранных студентов нашего университета для дальнейшего развития."
+          />
+        </ParagraphBlock>
+      </Section>
+    </div>
+  </div>
+</BaseLayout>

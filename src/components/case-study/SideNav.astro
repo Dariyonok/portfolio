@@ -1,0 +1,37 @@
+---
+// Left-column in-page nav for case study pages — 3 of the page's 12
+// grid columns (see CaseHero.astro for the full grid math). Sticky to
+// the vertical center of the viewport (`top-1/2 -translate-y-1/2`) so it
+// stays centered as you scroll through the (long) page below the hero.
+//
+// `data-hide-until-scrolled-past="hero"` (see ScrollReveal.astro) keeps
+// it fully hidden until CaseHero's `#hero` section has completely
+// scrolled past — otherwise, on a tall viewport, its natural position
+// could start peeking in at the bottom of the screen while the hero is
+// still largely in view.
+//
+// No active-section highlighting yet (scroll-spy), just links + a hover
+// color change.
+import { nbsp } from "../../lib/text";
+
+interface Props {
+  items: { label: string; href: string }[];
+}
+const { items } = Astro.props;
+---
+
+<nav
+  class="sticky top-1/2 flex w-[21.0625rem] shrink-0 -translate-y-1/2 flex-col gap-[3rem]"
+  data-hide-until-scrolled-past="hero"
+>
+  {
+    items.map((item) => (
+      <a
+        href={item.href}
+        class="text-[1rem] leading-[1.12] text-[#aaa7a7] transition-colors duration-300 [transition-timing-function:ease] hover:text-[#585454]"
+      >
+        {nbsp(item.label)}
+      </a>
+    ))
+  }
+</nav>

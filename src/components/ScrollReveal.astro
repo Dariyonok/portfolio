@@ -1,0 +1,343 @@
+---
+// Three scroll-driven effects live here:
+//
+// 1. `[data-reveal]` — a simple one-time fade + slide-up when an element
+//    first enters the viewport (used for cards, images).
+//    `[data-reveal="scale"]` is the same idea with a different motion —
+//    scales from 0.95 → 1 instead of rising — used for the case study
+//    "infographic" frames.
+//
+// 2. `[data-reveal-text]` (paired with RevealText.astro's per-word
+//    `.reveal-word` spans) — word-by-word reveal, each word rising from
+//    fully invisible. Splits by `data-reveal-unit`:
+//    - "word" (headings, short labels) — `data-reveal-trigger="scroll"`
+//      scrubs continuously with scroll position (reversible — scroll
+//      back up and words dim again); `data-reveal-trigger="load"` plays
+//      once, staggered, as soon as the page is ready (used for the hero,
+//      so it replays on reload).
+//    - "line" (body paragraphs) — a one-time reveal, the whole paragraph
+//      fading in together (staggered slightly word-to-word, but all
+//      within a couple hundred ms) as soon as it's ~15% into the
+//      viewport, same trigger condition as `[data-reveal]` above. Used
+//      to be scroll-scrubbed line-by-line like the word case, revealing
+//      one rendered line per few percent of scroll — technically showed
+//      the *effect* working, but on anything longer than 2-3 lines it
+//      meant scrolling most of the way down the page before the last
+//      line ever appeared, which read as sluggish/broken rather than
+//      intentional. See `initParagraphReveal` below.
+//
+// 3. `[data-scroll-rotate="<degrees>"]` — continuous scroll-linked
+//    rotation, 0deg → the given target, driven by how far its parent
+//    wrapper has traveled through the viewport. Used for the about-me
+//    sticky card stack (see AboutMe.astro for the structural half of
+//    that effect — this only owns the rotation).
+//
+// 4. `[data-hide-until-scrolled-past="<id>"]` — fully hidden (not just
+//    faded) until the element with that id has completely scrolled past
+//    (its bottom edge above the viewport), then fades in and stays
+//    visible. Used to keep the case study side nav off-screen for the
+//    whole hero, regardless of viewport height (its own `sticky top-1/2`
+//    centering could otherwise let it start peeking in early on a tall
+//    window, well before the hero's natural flow position would suggest).
+//
+// All four respect prefers-reduced-motion (render fully visible/settled,
+// no motion) and fail open if IntersectionObserver isn't available.
+---
+
+<style is:global>
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(1.5rem);
+    transition:
+      opacity 0.7s ease-out,
+      transform 0.7s ease-out;
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-reveal="scale"] {
+    transform: scale(0.95);
+  }
+
+  .reveal-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.35rem);
+    transition:
+      opacity 0.3s ease-out,
+      transform 0.3s ease-out;
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal-word.is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-hide-until-scrolled-past] {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-out;
+  }
+
+  [data-hide-until-scrolled-past].is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal],
+    .reveal-word,
+    [data-hide-until-scrolled-past] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+      pointer-events: auto;
+    }
+  }
+</style>
+
+<script>
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function initBlockReveal() {
+    const els = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    if (!els.length) return;
+
+    if (reduceMotion.matches || !("IntersectionObserver" in window)) {
+      els.forEach((el) => el.classList.add("is-revealed"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const el = entry.target as HTMLElement;
+          const delay = el.dataset.revealDelay;
+          if (delay) el.style.setProperty("--reveal-delay", `${delay}ms`);
+          el.classList.add("is-revealed");
+          obs.unobserve(el);
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    els.forEach((el) => observer.observe(el));
+  }
+
+  function initWordRevealLoad() {
+    const containers = document.querySelectorAll<HTMLElement>('[data-reveal-text][data-reveal-trigger="load"]');
+    if (!containers.length) return;
+
+    const words = document.querySelectorAll(
+      '[data-reveal-trigger="load"] .reveal-word'
+    );
+    if (reduceMotion.matches) {
+      words.forEach((w) => w.classList.add("is-revealed"));
+      return;
+    }
+    // Each word already carries its own --reveal-delay (set in
+    // RevealText.astro), so just flipping the class on all of them
+    // together still staggers visually via CSS transition-delay.
+    requestAnimationFrame(() => {
+      words.forEach((w) => w.classList.add("is-revealed"));
+    });
+  }
+
+  function initWordRevealScroll() {
+    // unit="word" only — unit="line" (body paragraphs) is handled by
+    // initParagraphReveal below instead, as a one-time whole-block fade
+    // rather than a continuous scroll-scrub.
+    const containers = document.querySelectorAll<HTMLElement>(
+      '[data-reveal-text][data-reveal-trigger="scroll"][data-reveal-unit="word"]'
+    );
+    if (!containers.length) return;
+
+    if (reduceMotion.matches || !("IntersectionObserver" in window)) {
+      containers.forEach((c) => c.querySelectorAll(".reveal-word").forEach((w) => w.classList.add("is-revealed")));
+      return;
+    }
+
+    const active = new Set<HTMLElement>();
+    let ticking = false;
+
+    function requestTick() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+
+    function update() {
+      ticking = false;
+      const vh = window.innerHeight;
+      // startY at 1.0 (the very bottom of the viewport) means reveal
+      // begins the instant a layer's top edge scrolls into view, rather
+      // than waiting until it's already most of the way up the screen —
+      // the previous 0.88 made the reveal feel abrupt/late.
+      const startY = vh;
+      const endY = vh * 0.4;
+
+      active.forEach((container) => {
+        const rect = container.getBoundingClientRect();
+        const progress = Math.min(1, Math.max(0, (startY - rect.top) / (startY - endY)));
+        const words = container.querySelectorAll(".reveal-word");
+        const revealCount = Math.round(progress * words.length);
+        words.forEach((w, i) => w.classList.toggle("is-revealed", i < revealCount));
+      });
+
+      if (active.size) requestAnimationFrame(update);
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) active.add(entry.target as HTMLElement);
+          else active.delete(entry.target as HTMLElement);
+        }
+        if (active.size) requestTick();
+      },
+      { rootMargin: "15% 0px 15% 0px", threshold: 0 }
+    );
+
+    containers.forEach((c) => observer.observe(c));
+    window.addEventListener("scroll", requestTick, { passive: true });
+  }
+
+  function initParagraphReveal() {
+    // unit="line" — a body paragraph fades in as one whole block, all
+    // its words together at once (they don't carry the per-word
+    // --reveal-delay that trigger="load" text does, so there's no
+    // stagger here), the first time it's ~15% into the viewport, same
+    // trigger condition as [data-reveal] — one-time, not scroll-scrubbed,
+    // so a long paragraph doesn't need most of a screen's worth of
+    // scrolling before its last line ever appears.
+    const containers = document.querySelectorAll<HTMLElement>(
+      '[data-reveal-text][data-reveal-trigger="scroll"][data-reveal-unit="line"]'
+    );
+    if (!containers.length) return;
+
+    if (reduceMotion.matches || !("IntersectionObserver" in window)) {
+      containers.forEach((c) => c.querySelectorAll(".reveal-word").forEach((w) => w.classList.add("is-revealed")));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const container = entry.target as HTMLElement;
+          container.querySelectorAll(".reveal-word").forEach((w) => w.classList.add("is-revealed"));
+          obs.unobserve(container);
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    containers.forEach((c) => observer.observe(c));
+  }
+
+  function initScrollRotate() {
+    const els = document.querySelectorAll<HTMLElement>("[data-scroll-rotate]");
+    if (!els.length) return;
+
+    if (reduceMotion.matches || !("IntersectionObserver" in window)) {
+      els.forEach((el) => {
+        const deg = el.dataset.scrollRotate;
+        if (deg) el.style.transform = `rotate(${deg}deg)`;
+      });
+      return;
+    }
+
+    const active = new Set<HTMLElement>();
+    let ticking = false;
+
+    function requestTick() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+
+    function update() {
+      ticking = false;
+      const vh = window.innerHeight;
+
+      active.forEach((el) => {
+        const container = el.offsetParent as HTMLElement | null;
+        if (!container) return;
+        // el.getBoundingClientRect() is unusable here once the element is
+        // actually stuck — it reports the pinned viewport position, not
+        // real scroll progress. offsetTop instead gives the element's
+        // static (as-if-not-sticky) position, which is stable; combined
+        // with its container's live rect (the container itself is only
+        // `position: relative`, so its rect moves normally with scroll),
+        // that reconstructs a true "natural" position to drive progress
+        // from — 0 when it enters at the viewport bottom, 1 once it's
+        // scrolled fully past the top.
+        const naturalTop = container.getBoundingClientRect().top + el.offsetTop;
+        const height = el.offsetHeight;
+        const progress = Math.min(1, Math.max(0, (vh - naturalTop) / (vh + height)));
+        const target = parseFloat(el.dataset.scrollRotate || "0");
+        el.style.transform = `rotate(${progress * target}deg)`;
+      });
+
+      if (active.size) requestAnimationFrame(update);
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) active.add(entry.target as HTMLElement);
+          else active.delete(entry.target as HTMLElement);
+        }
+        if (active.size) requestTick();
+      },
+      { rootMargin: "0px", threshold: 0 }
+    );
+
+    els.forEach((el) => observer.observe(el));
+    window.addEventListener("scroll", requestTick, { passive: true });
+  }
+
+  function initHideUntilScrolledPast() {
+    const els = document.querySelectorAll<HTMLElement>("[data-hide-until-scrolled-past]");
+    if (!els.length) return;
+
+    if (reduceMotion.matches) {
+      els.forEach((el) => el.classList.add("is-visible"));
+      return;
+    }
+
+    let ticking = false;
+    function requestTick() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+
+    function update() {
+      ticking = false;
+      els.forEach((el) => {
+        const targetId = el.dataset.hideUntilScrolledPast;
+        const target = targetId && document.getElementById(targetId);
+        // No matching target — fail open rather than hide forever.
+        const past = !target || target.getBoundingClientRect().bottom <= 0;
+        el.classList.toggle("is-visible", past);
+      });
+    }
+
+    window.addEventListener("scroll", requestTick, { passive: true });
+    update();
+  }
+
+  initBlockReveal();
+  initWordRevealLoad();
+  initWordRevealScroll();
+  initParagraphReveal();
+  initScrollRotate();
+  initHideUntilScrolledPast();
+</script>

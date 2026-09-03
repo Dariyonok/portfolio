@@ -1,0 +1,30 @@
+---
+// The моя роль / период / команда row — fills the full 9-column content
+// width, split into equal-width cells (`flex-1`) with a 20px (1.25rem)
+// gap between them.
+import { nbsp } from "../../lib/text";
+
+interface Field {
+  label: string;
+  values: string[];
+}
+interface Props {
+  fields: Field[];
+}
+const { fields } = Astro.props;
+---
+
+<div class="flex w-full gap-[1.25rem]">
+  {
+    fields.map((field) => (
+      <div class="flex flex-1 flex-col gap-[0.5rem]">
+        <p class="text-[0.875rem] uppercase leading-[1.12] text-[#aaa7a7]">{nbsp(field.label)}</p>
+        <div class="flex flex-col text-[1.125rem] leading-[1.12] text-[#252322]">
+          {field.values.map((v) => (
+            <span>{nbsp(v)}</span>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+</div>

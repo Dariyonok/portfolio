@@ -1,0 +1,62 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@import "@fontsource-variable/manrope";
+
+@theme {
+  --font-sans: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+/*
+ * Fluid scaling, 768px–1512px.
+ *
+ * The Figma design is authored at a 1512px frame width. Instead of fixed
+ * breakpoints, every size in the page is expressed in rem (Figma px ÷ 16),
+ * and the root font-size itself scales with the viewport — so the whole
+ * layout shrinks/grows together, proportionally, exactly like scaling the
+ * Figma frame. 1rem = 16px at 1512px viewport width, down to 1rem ≈ 8.13px
+ * at 768px. Below 768px the scale holds at its floor; a dedicated <768px
+ * layout comes later and can override this.
+ */
+:root {
+  font-size: clamp(8.127px, 1.0582vw, 16px);
+}
+
+/* 40px breathing room above whatever an anchor link scrolls to, so the
+   target heading doesn't land flush against the very top edge of the
+   viewport. */
+html {
+  scroll-padding-top: 2.5rem;
+}
+
+/* Anchor links (nav, side nav, footer) scroll smoothly to their target
+   instead of jumping instantly — sitewide, homepage and case studies
+   alike. Skipped under reduced-motion, same as every other animation on
+   the site. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* Native cursor hidden only once CustomCursor.astro's script confirms a
+   real mouse is present (see its (hover: hover) and (pointer: fine) check) —
+   so touch/trackpad-only visitors, and anyone with reduced-motion set,
+   keep the normal system cursor. */
+html.custom-cursor-active,
+html.custom-cursor-active * {
+  cursor: none;
+}
+
+/* Hides the scrollbar on horizontally-scrolling sections (e.g. the
+   featured-projects carousel) while keeping the element scrollable. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

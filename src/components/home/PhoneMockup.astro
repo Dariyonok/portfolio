@@ -1,0 +1,35 @@
+---
+// A simplified, reusable iPhone-style frame. Not a pixel copy of Figma's
+// bezel/shadow construction (that was hundreds of layers per phone) — just
+// a clean frame with a screen slot, so screenshots can be swapped in
+// directly by editing the `src` passed in from the parent card, no design
+// tool required.
+interface Props {
+  src?: string;
+  alt?: string;
+  rotate?: string; // Tailwind rotate class, e.g. "-rotate-3"
+  width?: string; // rem value, e.g. "10rem"
+  class?: string;
+}
+
+const { src, alt = "", rotate = "", width = "10rem", class: className = "" } = Astro.props;
+---
+
+<div class={`shrink-0 ${rotate} ${className}`} style={{ width }}>
+  <div class="relative aspect-[9/19.5] w-full rounded-[1.25rem] bg-[#111] p-[0.25rem] shadow-[0_0.5rem_1.5rem_rgba(0,0,0,0.35)]">
+    {/* dynamic island */}
+    <div class="absolute left-1/2 top-[0.375rem] h-[0.375rem] w-[2rem] -translate-x-1/2 rounded-full bg-black"></div>
+
+    <div class="relative h-full w-full overflow-hidden rounded-[1rem] bg-[#2a2a2a]">
+      {
+        src ? (
+          <img src={src} alt={alt} class="h-full w-full object-cover" />
+        ) : (
+          <div class="flex h-full w-full items-center justify-center border border-dashed border-white/20 p-[0.5rem] text-center text-[0.625rem] leading-[1.2] text-white/40">
+            добавьте скриншот
+          </div>
+        )
+      }
+    </div>
+  </div>
+</div>

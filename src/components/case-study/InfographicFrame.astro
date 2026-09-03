@@ -1,0 +1,21 @@
+---
+// Shared "infographic" card treatment: white rounded frame that scales in
+// (0.95 → 1) the first time it scrolls into view — see ScrollReveal.astro
+// for the `data-reveal="scale"` mechanics. Used for the stat/awards/meta
+// boxes and the placeholder illustration frames alike, so they all move
+// the same way.
+//
+// `padded=false` for a frame that's just a border around an edge-to-edge
+// image placeholder — conflicting Tailwind padding utilities (e.g. trying
+// to override `p-[2.5rem]` with a trailing `p-0` in `class`) don't
+// reliably resolve by string order, so this is a real prop instead.
+interface Props {
+  class?: string;
+  padded?: boolean;
+}
+const { class: className = "", padded = true } = Astro.props;
+---
+
+<div data-reveal="scale" class:list={["rounded-[2.25rem] bg-white", padded && "p-[2.5rem]", className]}>
+  <slot />
+</div>

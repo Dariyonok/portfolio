@@ -1,0 +1,89 @@
+---
+// Case study hero — a unique one-off layout, not the reusable 3/9-column
+// split the rest of the page uses (see SideNav.astro + the page's own
+// content column for that). Grid math from the 1512px reference: 12
+// columns, 52px page margins, 20px gutters → 99px/column. The background
+// card is 9 columns starting at column 4 (694+... → 1051px wide, offset
+// 22.3125rem, right edge landing flush with the page's own right margin —
+// same 52px as the language switch in the header); the text block is 6
+// columns starting at column 1 (694px, 43.375rem) — only the title
+// actually uses that full width, deliberately overlapping the card's
+// left edge (columns 4-6). The description, tags, and year stop at 3
+// columns (21.0625rem) instead, so they sit clear of the image rather
+// than overlapping it too. The illustration itself is 1050×720.
+//
+// `image`: the hero illustration. Omit it (or leave `imageSrc` unset) to
+// keep the dashed ImagePlaceholder — this is the one to fill in first
+// once you have real assets, since the page itself has no direct access
+// to this box (it lives inside this shared component, not the page).
+// No `cardColor`/padding gutter around it — an earlier version had a
+// 28px inset with a colored background behind it (meant to look
+// intentional while the box was still an empty placeholder), but with a
+// real image that inset was actively wrong: it shrank the rendered image
+// to 995×682 inside the 1051-wide box instead of the real 1050×720, so
+// the image just looked too small. The image now fills the frame
+// edge-to-edge, no gutter.
+import RevealText from '../RevealText.astro'
+import ImagePlaceholder from './ImagePlaceholder.astro'
+import { nbsp } from '../../lib/text'
+
+interface Props {
+  title: string
+  description: string
+  tags: string[]
+  year: string
+  imageSrc?: string
+  imageAlt?: string
+}
+const { title, description, tags, year, imageSrc, imageAlt = '' } = Astro.props
+---
+
+<section id="hero" class="relative px-[3.25rem] pb-[7.5rem]">
+  <div class="ml-[22.3125rem] w-[65.6875rem]">
+    {
+      imageSrc ? (
+        <img
+          src={imageSrc}
+          alt={imageAlt}
+          class="aspect-[1050/720] w-full rounded-[2.25rem] object-cover"
+        />
+      ) : (
+        <ImagePlaceholder
+          label="добавьте иллюстрацию"
+          aspect="1050/720"
+          class="border-black/15 bg-black/5"
+        />
+      )
+    }
+  </div>
+
+  <div class="absolute left-[3.25rem] top-[3rem] flex w-[43.375rem] flex-col">
+    <RevealText
+      text={title}
+      as="h1"
+      trigger="load"
+      wordDelay={60}
+      class="text-[3rem] font-semibold uppercase leading-[1.04] text-[#252322] sm:text-[4.5rem]"
+    />
+    <RevealText
+      text={nbsp(description)}
+      as="p"
+      trigger="load"
+      wordDelay={35}
+      startDelay={300}
+      class="mt-[1rem] max-w-[21.0625rem] text-[1.25rem] leading-[1.12] text-[#585454]"
+    />
+    <div class="mt-[2rem] flex max-w-[21.0625rem] flex-wrap gap-[0.5rem]">
+      {
+        tags.map((tag) => (
+          <span class="rounded-full bg-white/70 px-[0.75rem] py-[0.5rem] text-[0.875rem] leading-[1.12] text-[#585454]">
+            {nbsp(tag)}
+          </span>
+        ))
+      }
+    </div>
+    <p class="mt-[2rem] max-w-[21.0625rem] text-[1.125rem] leading-[1.12] text-[#aaa7a7]">
+      {year}
+    </p>
+  </div>
+</section>

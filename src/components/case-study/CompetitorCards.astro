@@ -1,0 +1,64 @@
+---
+// "конкуренты" panel: one white "infographic" frame (32px/2rem padding),
+// equal-width columns with a 20px gap — one per competitor, so 2
+// competitors (Aistio) split the panel's full width in half, not 2 of 3
+// columns with an empty gap where a third would be — each a logo row +
+// name + плюсы/минусы. Logo placeholders are 78×78px (4.875rem), 16px
+// (1rem) radius, 12px (0.75rem) gap between them. Column is
+// center-aligned (`items-center` centers the logo row itself,
+// `text-center` the text). `name` is H4 (SemiBold 24px/112%), matching
+// every other heading in these panels; the плюсы:/минусы: prefix is
+// Caption M (16px), the value text after it is the regular paragraph
+// style (20px).
+//
+// `logos` (up to 3 per competitor) is optional and per-slot — give just
+// 1 or 2 and the rest stay dashed placeholders.
+import RevealText from '../RevealText.astro'
+import { nbsp } from '../../lib/text'
+
+interface Competitor {
+  name: string
+  pros: string
+  cons: string
+  logos?: string[]
+}
+interface Props {
+  competitors: Competitor[]
+}
+const { competitors } = Astro.props
+// Tailwind's JIT scans source text for literal class names, so a
+// template-interpolated `sm:grid-cols-${n}` wouldn't be picked up — this
+// picks between the two literal classes that actually appear in source.
+const columnsClass = competitors.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'
+---
+
+<div data-reveal="scale" class="rounded-[2.25rem] bg-white p-[2rem]">
+  <div class:list={['grid grid-cols-1 gap-[1.25rem]', columnsClass]}>
+    {
+      competitors.map((c) => (
+        <div class="flex flex-col items-center gap-[1.25rem] text-center">
+          <div class="flex gap-[0.75rem]">
+            {[0, 1, 2].map((i) =>
+              c.logos?.[i] ? (
+                <img src={c.logos[i]} alt="" class="h-[4.875rem] w-[4.875rem] rounded-[1rem] object-cover" />
+              ) : (
+                <div class="h-[4.875rem] w-[4.875rem] rounded-[1rem] border-2 border-dashed border-black/10 bg-[#f7f6f4]" />
+              )
+            )}
+          </div>
+          <p class="text-[1.5rem] font-semibold leading-[1.12] text-[#252322]">
+            {nbsp(c.name)}
+          </p>
+          <p class="text-[1.25rem] leading-[1.12] text-[#585454]">
+            <span class="text-[1rem] uppercase text-[#aaa7a7]">плюсы:</span>{' '}
+            <RevealText as="span" unit="line" text={nbsp(c.pros)} />
+          </p>
+          <p class="text-[1.25rem] leading-[1.12] text-[#585454]">
+            <span class="text-[1rem] uppercase text-[#aaa7a7]">минусы:</span>{' '}
+            <RevealText as="span" unit="line" text={nbsp(c.cons)} />
+          </p>
+        </div>
+      ))
+    }
+  </div>
+</div>

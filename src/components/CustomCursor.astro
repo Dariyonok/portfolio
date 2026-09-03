@@ -1,0 +1,156 @@
+---
+// Custom cursor: a small white dot, always mix-blend-mode: difference (so
+// it reads as black on light backgrounds, white on dark ones — that part
+// never changes). Hovering anything tagged `data-cursor="view"` morphs it
+// into a solid white pill — blend mode OFF here, since it needs to render
+// reliably (Almost Black text + a black icon regardless of what's under
+// it) — reading "читать" with a small arrow on the right.
+// `data-cursor="soon"` shows "скоро" with a small dot instead of the arrow.
+//
+// Desktop-only: gated on (hover: hover) and (pointer: fine), and skipped
+// under prefers-reduced-motion. Touch/trackpad-only visitors keep the
+// native cursor untouched.
+//
+// Base size is 1.8375rem, which is 28px at a 1440px viewport — matching
+// the original Framer version — and scales fluidly with the rest of the
+// site the same way everything else does.
+//
+// The arrow is /images/home/icons/cursor-arrow.svg — drop your file there
+// (same name) to replace the placeholder below.
+---
+
+<div id="custom-cursor" class="custom-cursor" aria-hidden="true">
+  <span class="cursor-content cursor-content--view">
+    <span class="cursor-label">читать</span>
+    <img class="cursor-arrow" src="/images/home/icons/cursor-arrow.svg" alt="" />
+  </span>
+  <span class="cursor-content cursor-content--soon">
+    <span class="cursor-label">скоро</span>
+    <span class="cursor-dot-icon"></span>
+  </span>
+</div>
+
+<style>
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 1.8375rem;
+    height: 1.8375rem;
+    padding: 0 0.875rem;
+    border-radius: 9999px;
+    background: white;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transform: translate3d(-50%, -50%, 0);
+    transition:
+      opacity 0.2s ease,
+      width 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      padding 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, width, height;
+  }
+
+  .custom-cursor.is-visible {
+    opacity: 1;
+  }
+
+  .custom-cursor.is-active {
+    width: 7.5rem;
+    height: 2.375rem;
+    padding: 0 1rem;
+    mix-blend-mode: normal;
+  }
+
+  /* Position tracking (left/top, set every mousemove in JS) is deliberately
+     left out of the transition list above so following the mouse stays
+     instant — only the shape/size morph eases. */
+
+  .cursor-content {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .custom-cursor.is-active[data-state="view"] .cursor-content--view,
+  .custom-cursor.is-active[data-state="soon"] .cursor-content--soon {
+    display: flex;
+  }
+
+  /* Caption S: Manrope Regular, 14px, 112% line-height. */
+  .cursor-label {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.12;
+    color: #252322; /* Almost Black */
+  }
+
+  .cursor-arrow {
+    width: 0.875rem;
+    height: 0.875rem;
+    flex-shrink: 0;
+  }
+
+  .cursor-dot-icon {
+    width: 0.5rem;
+    height: 0.5rem;
+    flex-shrink: 0;
+    border-radius: 9999px;
+    background: #252322; /* Almost Black */
+  }
+</style>
+
+<script>
+  const mql = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function initCustomCursor() {
+    if (!mql.matches || reduceMotion.matches) return;
+
+    const cursor = document.getElementById("custom-cursor");
+    if (!cursor) return;
+
+    document.documentElement.classList.add("custom-cursor-active");
+
+    // JS only ever sets position (left/top); the morph (width/height/
+    // content) stays in CSS via classes, so the two never fight.
+    let shown = false;
+    window.addEventListener("mousemove", (e) => {
+      cursor.style.left = `${e.clientX}px`;
+      cursor.style.top = `${e.clientY}px`;
+      if (!shown) {
+        shown = true;
+        cursor.classList.add("is-visible");
+      }
+    });
+
+    document.addEventListener("mouseover", (e) => {
+      if (!(e.target instanceof Element)) return;
+      const target = e.target.closest("[data-cursor]");
+      if (!target) return;
+      cursor.dataset.state = target.getAttribute("data-cursor") || "";
+      cursor.classList.add("is-active");
+    });
+
+    document.addEventListener("mouseout", (e) => {
+      if (!(e.target instanceof Element)) return;
+      const target = e.target.closest("[data-cursor]");
+      if (!target) return;
+      if (e.relatedTarget instanceof Node && target.contains(e.relatedTarget)) return;
+      cursor.classList.remove("is-active");
+      delete cursor.dataset.state;
+    });
+  }
+
+  initCustomCursor();
+</script>

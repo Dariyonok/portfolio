@@ -1,0 +1,523 @@
+---
+// Aistio — case study. Hero only for now, same starting point as
+// medvedium.astro/easy-buddy.astro before their other sections were
+// built out — rest to come once there's source content to build from.
+//
+// `description` reuses the subtitle already established on the homepage
+// card (see FeaturedProjects.astro) — real, not placeholder, copy.
+// `tags` left empty for the same reason as easy-buddy.astro's: no brief
+// to pull real ones from yet.
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import CaseHero from '../../components/case-study/CaseHero.astro'
+import RevealText from '../../components/RevealText.astro'
+import SideNav from '../../components/case-study/SideNav.astro'
+import Section from '../../components/case-study/Section.astro'
+import ParagraphBlock from '../../components/case-study/ParagraphBlock.astro'
+import TextInfographic from '../../components/case-study/TextInfographic.astro'
+import InfographicFrame from '../../components/case-study/InfographicFrame.astro'
+import ImagePlaceholder from '../../components/case-study/ImagePlaceholder.astro'
+import AwardsList from '../../components/case-study/AwardsList.astro'
+import MetaRow from '../../components/case-study/MetaRow.astro'
+import StatsBox from '../../components/case-study/StatsBox.astro'
+import ProcessSteps from '../../components/case-study/ProcessSteps.astro'
+import IconCards from '../../components/case-study/IconCards.astro'
+import CompetitorCards from '../../components/case-study/CompetitorCards.astro'
+import { nbsp } from '../../lib/text'
+
+const navItems = [
+  { label: 'О проекте', href: '#about-project' },
+  { label: 'Исследование пользователей', href: '#research' },
+  { label: 'Работа с интерфейсом', href: '#interface' },
+  { label: 'Разработка фирменного стиля', href: '#identity' },
+  { label: 'Заключение', href: '#conclusion' }
+]
+
+const nextSteps = [
+  'Подробнее проработать сравнение двух попыток в упражнениях. В текущей версии есть намёк на такую возможность, но пока не видно, как будет происходить подобное сравнение',
+  'Настроить фильтрацию упражнений не только по типу задания, но и по статусу выполнения',
+  'Протестировать приложение на пользователях! На данный момент прототип не может точно передать процесс рисования из-за технических ограничений фигмы, поэтому было бы здорово собрать небольшой реальный продукт и опробовать его на пользователях'
+]
+---
+
+<BaseLayout
+  title="Aistio — кейс — Dariia M."
+  description="Приложение-дневник для арт-терапии."
+  headerSticky={false}
+  footerCTA={false}
+>
+  <CaseHero
+    title="aistio"
+    description="приложение-дневник для арт-терапии"
+    tags={[
+      'глубинные интервью',
+      'прототипирование',
+      'айдентика',
+      'дизайн-система'
+    ]}
+    year="2026"
+    imageSrc="/images/projects/aistio/aistio-case-image-1.jpg"
+  />
+
+  <div class="flex items-start gap-[1.25rem] px-[3.25rem] pb-[7.5rem]">
+    <SideNav items={navItems} />
+    <div class="min-w-0 flex-1">
+      <Section id="about-project" title="о проекте">
+        <ParagraphBlock heading="про продукт">
+          <TextInfographic
+            text="Aistio — приложение-дневник для арт-терапии, которое поможет безопасно выплеснуть эмоции и вернуть радость от творчества. Вместо записи в дневнике пользователю предлагается создать рисунок с помощью жестов: каждый взмах рукой и касание по экрану оставит след на цифровом холсте. По мере накопления рисунков, ИИ-система сможет анализировать их и давать персонализированные рекомендации по улучшению ментального состояния."
+          />
+          <MetaRow
+            fields={[
+              { label: 'моя роль:', values: ['UX/UI дизайнер'] },
+              { label: 'период:', values: ['сент. 2025 – май 2026'] }
+            ]}
+          />
+        </ParagraphBlock>
+        <ParagraphBlock heading="моя роль">
+          <TextInfographic
+            text="Я провела исследование пользователей, проанализировала результаты и спроектировала решение на их основе. Я отвечала проработку пользовательских сценариев, подготовку прототипа и визуальную часть проекта. Результатом стал интерактивный прототип приложения с четырьмя проработанными пользовательскими сценариями и дизайн-системой."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-2.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="задача проекта">
+          <TextInfographic>
+            <div class="flex flex-col gap-[2rem]">
+              {
+                /* Manrope SemiBold 64px/112% — same style as the stat percentages in StatsBox.astro. */
+              }
+              <RevealText
+                text={nbsp(
+                  'Как помочь человеку выразить эмоции, когда на слова не хватает сил?'
+                )}
+                as="h3"
+                class="text-[4rem] font-semibold uppercase leading-[1.12] text-[#252322]"
+              />
+              <RevealText
+                text={nbsp(
+                  'Этот вопрос стал отправной точкой проекта Aistio и началом рассуждений о том, как это можно сделать с помощью цифрового продукта.'
+                )}
+                unit="line"
+                class="max-w-[43.375rem] text-[1.25rem] leading-[1.12] text-[#585454]"
+              />
+            </div>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+      <Section id="research" title="исследование пользователей">
+        <ParagraphBlock heading="опрос пользователей">
+          <TextInfographic
+            text="За последние годы рынок digital self-care активно растёт, однако большинство существующих приложений строятся вокруг текстовых дневников и трекеров настроения, а существующие приложения для арт-терапии фокусируются не столько на процессе рисования, сколько на рефлексии автора во время сеанса."
+          >
+            <Fragment slot="infographic">
+              <CompetitorCards
+                competitors={[
+                  {
+                    name: 'Приложения для творчества и арт-терапии',
+                    pros: 'пространство для самовыражения и рефлексии',
+                    cons: 'однообразное взаимодействие: пользователь водит пальцем по экрану, или рисует на бумаге',
+                    logos: [
+                      '/images/projects/aistio/aistio-competitors-first-1.png',
+                      '/images/projects/aistio/aistio-competitors-first-2.png',
+                      '/images/projects/aistio/aistio-competitors-first-3.png'
+                    ]
+                  },
+                  {
+                    name: 'Дневники, медитации и трекеры настроения',
+                    pros: 'механики, которые помогают сохранять регулярность практик',
+                    cons: 'задействуют, преимущественно, словесное выражение эмоций, сложное для многих',
+                    logos: [
+                      '/images/projects/aistio/aistio-competitors-second-1.png',
+                      '/images/projects/aistio/aistio-competitors-second-2.png',
+                      '/images/projects/aistio/aistio-competitors-second-3.png'
+                    ]
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+          <TextInfographic
+            text="Такой подход подходит не всем: в состоянии сильного стресса человеку бывает сложно подобрать слова, чтобы описать своё состояние. Часто ли такое происходит? Какие у людей есть альтернативные способы справляться со стрессом? Чтобы ответить на эти вопросы и проверить, действительно ли проблема существует и насколько предложенная идея может быть полезной, я провела опрос. Вот, что удалось выяснить:"
+          >
+            <Fragment slot="infographic">
+              <StatsBox
+                goalLabel="цель:"
+                goal="Понять, как респонденты справляются со стрессом на повседневной основе и какую роль в этом играет творчество"
+                sampleLabel="выборка:"
+                sample="80 человек от 14 до 72 лет. Опрос распространялся среди студентов моего университета и их знакомых"
+                stats={[
+                  {
+                    percent: '57%',
+                    description:
+                      'испытывают сложности со словесным выражением эмоций',
+                    insight:
+                      'Нужно минимизировать необходимость описывать настроение словами'
+                  },
+                  {
+                    percent: '41%',
+                    description:
+                      'прибегают к творчеству как к успокоительной практике несколько раз в неделю',
+                    insight:
+                      'упражнения маленькие, но регулярные, чтобы можно было поддерживать привычку, не уставая'
+                  },
+                  {
+                    percent: '45%',
+                    description:
+                      'называли нехватку времени основной причиной отказа от творческой терапии',
+                    insight:
+                      'Упражнения не должны требовать много времени, но и ограничивать пользователя нельзя'
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+          <TextInfographic
+            text="Данные, полученные из опроса, помогли мне составить предварительный список функций и ограничений приложения и начать работать над юзерфлоу проекта."
+            links={[{ text: 'юзерфлоу', href: 'https://vk.cc/cV8jeI' }]}
+          />
+        </ParagraphBlock>
+        <ParagraphBlock heading="глубинные интервью">
+          <TextInfographic
+            text="Мне было важно сделать так, чтобы приложение стало для пользователей конфиденциальным и безопасным пространством, где не страшно творить и делать некрасиво. Поэтому я провела 18 глубинных интервью, чтобы уточнить механики приложения."
+          >
+            <Fragment slot="infographic">
+              <StatsBox
+                goalLabel="цель:"
+                goal="понять, как пользователи относятся к терапевтическому рисованию, насколько им важно контролировать процесс, как они относятся к ошибкам и готовы ли делиться терапевтическими работами с другими"
+                sampleLabel="выборка:"
+                sample="Творческие люди, которые регулярно занимаются рисованием/рукоделием. Среди них — художники, дизайнеры и просто все, кто увлекается творчеством. Я искала респондентов с помощью соцсетей"
+                findingsLabel="гипотезы:"
+                stats={[
+                  {
+                    description:
+                      'Я предполагала, что терапевтические работы ощущаются как более личные.',
+                    arrowIcon: '/images/home/icons/icon_check.svg',
+                    arrowLabel: 'гипотеза подтвердилась',
+                    insightPercent: '16',
+                    insight:
+                      'респондентов поделились, что далеко не всеми работами готовы делиться, и для них важно иметь архив, который будет доступен только им',
+                    image: '/images/projects/aistio/aistio-case-image-3.png'
+                  },
+                  {
+                    description:
+                      'Я подумала о том, что кому-то может быть сложно творить при полной свободе действий',
+                    arrowIcon: '/images/home/icons/icon_check.svg',
+                    arrowLabel: 'гипотеза подтвердилась',
+                    insightPercent: '8',
+                    insight:
+                      'человек отметили, что с мягкими ограничениями творить намного проще и спокойнее, особенно тем, кто боится ошибиться',
+                    image: '/images/projects/aistio/aistio-case-image-4.png'
+                  },
+                  {
+                    description:
+                      'Одним из моих предположений также являлась мысль о том, что даже при рисовании для себя, людям важно ощущать контроль',
+                    arrowIcon: '/images/home/icons/icon_cross.svg',
+                    arrowLabel: 'гипотеза не подтвердилась',
+                    insightPercent: '15',
+                    insight:
+                      'респондентов называли нехватку времени основной причиной отказа от творческой терапии',
+                    image: '/images/projects/aistio/aistio-case-image-5.png'
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="Портрет аудитории">
+          <TextInfographic
+            text="На основе исследования я выделила три поведенческих сегмента."
+          >
+            <Fragment slot="infographic">
+              <IconCards
+                difficultiesLabel="контекст:"
+                goalLabel="потребность:"
+                cards={[
+                  {
+                    name: 'Творческие исследователи',
+                    difficulties:
+                      'живут ради экспериментов и ценят инструменты для творчества',
+                    goal: 'новые способы самовыражения',
+                    icon: '/images/projects/aistio/aistio-case-audience-1.png'
+                  },
+                  {
+                    name: 'Художники-любители и новички',
+                    difficulties:
+                      'рисовать профессионально не умеют и боятся, что получится некрасиво',
+                    goal: 'простой и «безопасный» вход в творчество',
+                    icon: '/images/projects/aistio/aistio-case-audience-2.png'
+                  },
+                  {
+                    name: 'Осознанные и рефлексирующие',
+                    difficulties:
+                      'Ведут дневники, занимаются йогой или медитацией. Любят небольшие ежедневные ритуалы',
+                    goal: 'регулярная практика для развития EQ',
+                    icon: '/images/projects/aistio/aistio-case-audience-3.png'
+                  }
+                ]}
+              />
+            </Fragment>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+      <Section id="interface" title="Работа с интерфейсом">
+        <ParagraphBlock heading="сценарий 1: регистрация и настройка профиля">
+          <TextInfographic
+            text="Здесь нужно показать пользователю, как создаются рисунки и предложить попробовать рисование жестами. При желании, после первой практики он сможет создать аккаунт, чтобы сохранять рисунки и получать анализ по ним."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-6.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Как правило, пользователи не хотят оставлять в незнакомом приложении личные данные, поэтому, чтобы повысить их доверие и улучшить конвертацию в регистрацию, первый рисунок можно нарисовать до создания аккаунта. А уже потом мы предлагаем сохранить его и все последующие работы, привязав их к одному аккаунту.
+
+Процесс рисования не совсем интуитивно понятен, поэтому при первой сессии рисования предусмотрены подсказки, помогающие пользователю понять интерфейс и быстрее начать рисовать."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-7.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="сценарий 2: ежедневная практика">
+          <TextInfographic
+            text="Каждый день пользователь заходит в приложение, чтобы задокументировать своё состояние и создать рисунок. Согласно результатам опроса и интервью, для многих людей словесное выражение эмоции и рефлексия остаются важны. Поэтому практика состоит из двух частей: оценки состояния (опциональной) и создания рисунка (обязательной). При оценке состояния пользователь может подробнее описать своё настроение, прикрепить фотографии или аудиозаметки, но это является необязательным действием"
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-8.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-9.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Чтобы повысить вероятность того, что пользователь будет заходить и рисовать каждый день, используются такие механики удержания как streak и виджеты."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-10.png"
+                alt=""
+                class="aspect-[1051/482] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="сценарий 3: дополнительные упражнения">
+          <TextInfographic
+            text="Для тех, кто хочет рисовать по какой-то определённой теме, есть коллекция упражнений, которые помогут порефлексировать и лучше узнать себя. После каждого упражнения ему доступен анализ рисунка от ИИ, помогающий с анализом и интерпретацией рисунка
+Предусмотрены 4 вида упражнений: пользователь может быть ограничен темой, цветовой палитрой, временем выполнения или жестами, которые он может использовать. Упражнения можно искать с помощью фильтров."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-11.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="При последующем анализе разбираем характер движений, цветовую палитру, интенсивность и время выполнения задания, а также текстовую заметку, оставленную пользователем (при наличии)."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-12.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-13.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="сценарий 4: аналитика и архив работ">
+          <TextInfographic
+            text="По мере накопления рисунков, пользователю открывается доступ с основными данными по его рисункам, где можно базовые данные, например, характер жестов и часто используемые слова в заметках (при наличии), а также тренды и разбор их возможного значения от ИИ (например, что может означать та цветовая гамма, которую пользователь чаще всего использует)"
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-14.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-15.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Все рисунки пользователя хранятся в архиве. Там можно также можно просмотреть записи и картинки, добавленные к каждой работе."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-16.png"
+                alt=""
+                class="aspect-[1051/592] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="дизайн-система">
+          <TextInfographic
+            text="Для проекта была разработана единая дизайн-система, включающая библиотеку компонентов, токены цветов, типографики, отступов и радиусов. Это позволило сохранить консистентность интерфейса и подготовить макеты к передаче в разработку."
+            links={[{ text: 'дизайн-система', href: 'https://www.figma.com/design/UESruU2fZh9rdmKvaj1pf9/Aistio?node-id=64-971&t=d8Cc1a3erSEoMCKU-1' }]}
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-17.png"
+                alt=""
+                class="aspect-[1051/550] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+      <Section id="identity" title="Разработка фирменного стиля">
+        <ParagraphBlock heading="Элементы фирменного стиля'">
+          <TextInfographic
+            text="Для проекта был разработан фирменный стиль и гайдлайны по его использованию. В айдентике используются два шрифта, несколько основных цветов, а также градиенты из дополнительных цветов."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-18.png"
+                alt=""
+                class="aspect-[1051/616] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Полная версия логотипа — название бренда с каллиграфической буквой S. Подобное написание буквы отсылает к траектории движения руки, создающей рисунок. Сокращённая версия — буква S в контрформе, используемая отдельно от надписи. Сокращённая версия используется на маленьких носителях, а также в качестве фавиконки на веб-носителях."
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-19.png"
+                alt=""
+                class="aspect-[1051/401] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+          <TextInfographic
+            text="Для правильного и комфортного использования элементов фирменного стиля был составлен стайлгайд, в котором раскрыты правила применения шрифтов, цветов и графических элементов."
+            links={[{ text: 'стайлгайд', href: 'https://www.figma.com/proto/UESruU2fZh9rdmKvaj1pf9/Aistio?node-id=1168-24821&viewport=406%2C89%2C0.08&t=BjuqXoqwdNGqJV1F-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=1168%3A24821&page-id=64%3A973' }]}
+          >
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-20.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+        <ParagraphBlock heading="носители фирменного стиля">
+          <TextInfographic>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-21.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-22.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-23.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-24.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-25.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-26.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+            <InfographicFrame slot="infographic" padded={false}>
+              <img
+                src="/images/projects/aistio/aistio-case-image-27.png"
+                alt=""
+                class="aspect-[1051/591] w-full rounded-[2.25rem] object-cover"
+              />
+            </InfographicFrame>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+      <Section id="conclusion" title="Заключение">
+        <ParagraphBlock heading="результаты проекта">
+          <TextInfographic
+            text="В результате работы над проектом я спроектировала прототип мобильного приложения с 4 ключевыми сценариями, собрала дизайн-систему из 120+ компонентов, а также разработала айдентику бренда и гайд по применению фирменного стиля. Проект основан на исследовании с участием 98 пользователей."
+          />
+        </ParagraphBlock>
+        <ParagraphBlock heading="следующие шаги     ">
+          <TextInfographic>
+            <ol class="flex flex-col gap-[1rem]">
+              {
+                nextSteps.map((step, i) => (
+                  <li class="flex gap-[1rem]">
+                    <span class="text-[1.25rem] leading-[1.12] text-[#cdcbcb]">
+                      {i + 1}.
+                    </span>
+                    <RevealText
+                      text={nbsp(step)}
+                      class="text-[1.25rem] leading-[1.12] text-[#585454]"
+                    />
+                  </li>
+                ))
+              }
+            </ol>
+          </TextInfographic>
+        </ParagraphBlock>
+      </Section>
+    </div>
+  </div></BaseLayout
+>

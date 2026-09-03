@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, summary, role, year, cover, coverAlt } = project.data;
+---
+
+<a
+  href={`/work/${project.id}/`}
+  class="group block overflow-hidden rounded-lg border border-neutral-200 transition-colors hover:border-neutral-400"
+>
+  <div class="aspect-[4/3] w-full overflow-hidden bg-neutral-100">
+    {
+      cover && (
+        <Image
+          src={cover}
+          alt={coverAlt ?? ''}
+          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+        />
+      )
+    }
+  </div>
+  <div class="p-4">
+    <div class="flex items-baseline justify-between gap-4">
+      <h2 class="font-medium text-neutral-900">{title}</h2>
+      <span class="shrink-0 text-xs text-neutral-500">{year}</span>
+    </div>
+    <p class="mt-1 text-sm text-neutral-600">{summary}</p>
+    {
+      role.length > 0 && (
+        <p class="mt-2 text-xs uppercase tracking-wide text-neutral-400">{role.join(' · ')}</p>
+      )
+    }
+  </div>
+</a>

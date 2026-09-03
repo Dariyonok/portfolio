@@ -1,0 +1,119 @@
+---
+// Matches the Figma "Frame 2087326088" pill nav + logo + language switcher.
+// Each link sits in a fixed 95px (5.9375rem) box so the row reads as
+// evenly balanced regardless of label length; fill/text color animate in
+// on hover (0.2s ease). "cv" opens the external Notion résumé in a new
+// tab; the other three are anchors into sections on this page.
+//
+// `sticky` (default true): the homepage wants just the pill nav pinned
+// while scrolling — the logo and language switch scroll away normally
+// with the rest of the page. Case study pages ask for none of it to be
+// fixed instead — pass `sticky={false}` there; that's also when the
+// back-arrow (below, its own fixed element) shows at all, since it's
+// not needed on the homepage itself.
+//
+// The nav uses `position: fixed`, not `sticky`, despite the prop's name:
+// `sticky` can only hold an element in place while its own parent box is
+// still on screen, and here that parent is just this one short header
+// row — a couple hundred px into the page the row itself has long
+// scrolled past, so a `sticky` nav would release and scroll away right
+// along with the logo, which isn't what "pinned while scrolling" means.
+// `fixed` positions against the viewport instead, with no such limit —
+// `top`/`left` below are just hand-matched to the nav's own natural
+// position in the header row so it doesn't jump when it detaches.
+//
+// `min-h-[3.8125rem]` on the row: without it, the row's height differs
+// between the two layouts — the grid layout (case study pages) is as
+// tall as the in-flow nav pill (~61px), but the flex layout (homepage)
+// has no nav in it at all (it's `fixed`, out of flow) and collapses to
+// just the logo/button's own short height. Since both rows still center
+// their content vertically, that height difference shifts the logo's
+// actual Y position between the two — visible as a little jump when
+// navigating from a case study page back to the homepage. Giving both
+// layouts the same explicit minimum height keeps the logo's position
+// identical regardless of which one is active.
+//
+// The back-arrow (case study pages only) is a separate fixed element
+// entirely, not part of the logo row — it shouldn't show during the
+// hero, and stays pinned in the top-left corner (52px/3.25rem from both
+// edges, matching the page's own side margins) for the whole rest of the
+// page, same `data-hide-until-scrolled-past="hero"` mechanism SideNav.astro
+// uses (see ScrollReveal.astro's initHideUntilScrolledPast).
+interface Props {
+  sticky?: boolean;
+}
+const { sticky = true } = Astro.props;
+
+const navLinks = [
+  { label: "портфолио", href: "/#work" },
+  { label: "обо мне", href: "/#about" },
+  { label: "cv", href: "https://dariiamurakaeva.notion.site/239938a43bfa80968bf5faa60c50c457", external: true },
+  { label: "контакты", href: "/#contact" },
+];
+---
+
+{
+  /* Layout differs by `sticky`: when the nav is `fixed` (out of flow, see
+     below), a 3-column grid leaves a phantom gap in the middle — browsers
+     still reserve some width for an `auto` track even when its only item
+     is out of flow, so logo/lang end up pulled inward instead of flush to
+     the edges. `justify-between` on just the two real flex items (nav,
+     wherever it sits in the DOM, doesn't participate in flex layout once
+     fixed) sidesteps that entirely. When `sticky` is off, nav is back in
+     normal flow and genuinely needs the grid's middle column to sit
+     between them. */
+}
+<header class="px-[3.25rem] pt-[2.25rem] pb-[1.25rem]">
+  <div
+    class:list={[
+      "min-h-[3.8125rem] items-center",
+      sticky ? "flex justify-between" : "grid grid-cols-[1fr_auto_1fr] gap-4",
+    ]}
+  >
+    <a href="/" class="justify-self-start text-[0.875rem] font-semibold tracking-tight text-[#252322]">
+      Dariia M.
+    </a>
+
+    <nav
+      class:list={[
+        "justify-self-center flex items-center gap-0 rounded-[3.125rem] bg-white/60 px-[2rem] py-[0.5rem] backdrop-blur-sm",
+        sticky && "fixed left-1/2 top-[2.25rem] z-40 -translate-x-1/2",
+      ]}
+    >
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener noreferrer" : undefined}
+            class="flex w-[5.9375rem] items-center justify-center rounded-[3.75rem] px-[0.625rem] py-[0.75rem] text-center text-[0.875rem] lowercase text-[#252322] transition-colors duration-300 [transition-timing-function:ease] hover:bg-[#252322] hover:text-white"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button
+      type="button"
+      class="justify-self-end flex items-center gap-[0.75rem] text-[1.125rem] text-[#252322]"
+      aria-label="Switch language"
+    >
+      RU
+      <img src="/images/home/icons/lang-arrow.svg" alt="" class="h-[1rem] w-[1rem]" />
+    </button>
+  </div>
+</header>
+
+{
+  !sticky && (
+    <a
+      href="/"
+      aria-label="На главную"
+      class="fixed left-[3.25rem] top-[3.25rem] z-40"
+      data-hide-until-scrolled-past="hero"
+    >
+      <img src="/images/home/icons/arrow-left.svg" alt="" class="w-[3rem]" />
+    </a>
+  )
+}

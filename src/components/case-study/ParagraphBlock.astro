@@ -1,0 +1,20 @@
+---
+// Case study "Paragraph" frame: an eyebrow-style subheading + its content
+// blocks, 48px (3rem) apart. The content itself (one or more
+// TextInfographic blocks, or anything else) sits 44px (2.75rem) apart —
+// that's "Paragraph Content" in the original Figma naming.
+import RevealText from "../RevealText.astro";
+import { nbsp } from "../../lib/text";
+
+interface Props {
+  heading: string;
+}
+const { heading } = Astro.props;
+---
+
+<div class="flex flex-col gap-[3rem]">
+  <RevealText text={nbsp(heading)} as="p" class="text-[1.25rem] uppercase leading-[1.12] text-[#cdcbcb]" />
+  <div class="flex flex-col gap-[2.75rem]">
+    <slot />
+  </div>
+</div>

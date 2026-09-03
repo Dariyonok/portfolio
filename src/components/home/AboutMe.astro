@@ -1,0 +1,152 @@
+---
+// Matches Figma "Frame 2087326103" (bio) + the "обо мне" section.
+//
+// The photo stack replicates the old Framer site's mechanic: the heading,
+// the left text column, and the "ну, а помимо..." caption are all
+// `position: sticky`, and each card is *also* sticky at its own offset
+// (slightly below the caption), sharing one container. As you scroll, a
+// card rises normally until it hits its offset, then holds there while
+// the next one scrolls up and settles on top — the Figma design's tilted
+// deck is just this stack's resting state. `rotate` is each card's
+// *final* tilt; the live rotation is driven continuously by scroll
+// position via `data-scroll-rotate` (see ScrollReveal.astro).
+import RevealText from "../RevealText.astro";
+import { nbsp } from "../../lib/text";
+
+const collage = [
+  {
+    image: "/images/home/collage/photo-2.jpg",
+    title: "фисташковое мороженое",
+    subtitle: "это может быть важно",
+    rotate: 4,
+  },
+  {
+    image: "/images/home/collage/photo-3.jpg",
+    title: "рисовать глупенькие картинки",
+    subtitle: "люблю тушь, маркеры, линеры и акварель",
+    rotate: 6,
+  },
+  {
+    image: "/images/home/collage/photo-4.jpg",
+    title: "учиться, учиться и учиться",
+    subtitle: "особенно иностранные языки, историю и литературу",
+    rotate: -12,
+  },
+  {
+    image: "/images/home/collage/photo-5.jpg",
+    title: "k-pop и азиатскую культуру",
+    subtitle: "схожу с ума уже почти 9 лет, не осуждайте, пожалуйста",
+    rotate: -1,
+  },
+  {
+    image: "/images/home/collage/dog.jpg",
+    title: "проводить время с семьёй и питомцами",
+    subtitle: "на фото — моя собака Лада",
+    rotate: -6,
+  },
+].map((item) => ({ ...item, title: nbsp(item.title), subtitle: nbsp(item.subtitle) }));
+
+// All cards share this width now (previously varied per-card, which read
+// as inconsistent rather than intentionally organic).
+const cardWidth = "22rem";
+
+const bioParagraph1 = nbsp(
+  "В этом году я закончила Вышку по направлению «Дизайн и продвижение цифрового продукта». Умею работать в команде и ответственно подхожу к планированию времени. Однако я верю, что самое важное качество в дизайнере — эмпатия. Хорошие продукты появляются благодаря умению наблюдать и понимать людей."
+);
+const bioParagraph2 = nbsp(
+  "Я только начинаю свой путь в продуктовом дизайне, но я люблю учиться и исследовать, поэтому знаю, что у меня всё получится:)"
+);
+---
+
+<section id="about" class="px-[3.25rem] pb-[4.5rem] [overflow-anchor:none]">
+  {
+    /* `items-start` here matters: without it, flex's default `stretch`
+       forces the (short) bio column to match the (very tall) cards
+       column's height, which made it release from `sticky` only once
+       THAT stretched box's bottom passed — way later than the cards
+       actually finish. With natural heights, bio's release lines up with
+       the cards'.
+
+       The heading now lives *inside* the bio column, sharing its sticky
+       wrapper (same top offset as the caption on the other side — that's
+       what puts them "on the same level"), instead of sitting above the
+       row as its own separately-sticky block. It used to: giving a
+       standalone block a `min-h-[30rem]` for the release-math trick below
+       reserves that height in normal flow, which pushed this whole row
+       ~30rem down the page as visible empty space. Nested in a column
+       that's part of the same flex row as the (tall) cards, its
+       min-height no longer pushes anything — same trick the bio/caption
+       columns already relied on. */
+  }
+  <div class="flex flex-col items-start gap-[3rem] lg:flex-row lg:justify-between">
+    <div
+      class="z-[3] flex max-w-[36rem] min-h-[30rem] flex-col self-start lg:sticky lg:top-[7.5rem]"
+    >
+      <RevealText
+        text="обо мне"
+        as="p"
+        class="mb-[3rem] w-fit text-[1.25rem] uppercase leading-[1.12] text-[#cdcbcb]"
+      />
+      <div class="flex flex-col gap-[1.5rem] text-[1.5rem] leading-[1.12] text-[#585454]">
+        <RevealText text={bioParagraph1} />
+        <RevealText text={bioParagraph2} />
+      </div>
+    </div>
+
+    <div class="flex flex-col items-center self-start">
+      {
+        /* Caption and cards are all DIRECT siblings sharing this one
+           container — that's what makes the cards overlap: an
+           already-stuck card just keeps holding, bounded only by the
+           *whole* container's bottom, while later cards catch up and
+           stack on top of it (give a sticky element its own separate
+           wrapper instead and it releases before the next one ever
+           arrives to cover it, which was an earlier bug here). */
+      }
+      <div class="relative w-[25rem]">
+        <p class="sticky top-[7.5rem] z-[2] min-h-[30rem] w-full text-center text-[1.125rem] leading-[1.12] text-[#585454]">
+          {nbsp("ну, а помимо дизайна я люблю...")}
+        </p>
+
+        {
+          collage.map((item) => (
+            <div
+              class="sticky top-[12rem] mx-auto mt-[2rem] rounded-[2rem] bg-white p-[1rem] shadow-[0.0842rem_0.1685rem_0.5054rem_rgba(85,85,85,0.14)]"
+              style={{ width: cardWidth, zIndex: 1 }}
+              data-scroll-rotate={item.rotate}
+            >
+              <img src={item.image} alt="" class="aspect-square w-full rounded-[1.25rem] object-cover" />
+              <div class="flex flex-col gap-[0.3375rem] pt-[0.674rem] text-center">
+                <p class="text-[1.5rem] font-semibold leading-[1.12] text-[#252322]">{item.title}</p>
+                <p class="text-[1.125rem] leading-[1.12] text-[#aaa7a7]">{item.subtitle}</p>
+              </div>
+            </div>
+          ))
+        }
+
+        {/* Gives the last card a bit of dwell time before the group starts to release. */}
+        <div class="h-[10rem]" />
+      </div>
+    </div>
+  </div>
+</section>
+
+{
+  /* A `position: sticky` element releases the instant enough scrollable
+     content exists *after* its containing block to be geometrically
+     possible — not a moment later. So this can't be "generous", or the
+     slack past that exact point just sits there as visible empty space
+     before the footer (which is exactly what a first, too-generous `70vh`
+     attempt at this fix looked like). It has to be *precise*: sized in
+     `calc()` against the *viewport's* height so the relationship holds
+     regardless of window size, targeting the worst case here — the
+     heading+bio column and the caption, both at a 7.5rem offset with a
+     30rem min-height, need `100vh − 37.5rem`; a couple of rem of margin
+     covers rounding. Small screens where that would go negative just get
+     0 (a floor `min-height` can't). Sits *outside* the section on
+     purpose — inside, it would inflate every sticky element's own
+     containing block instead of adding genuine trailing content after
+     it, which cancels out and fixes nothing (an even earlier attempt at
+     this same fix). */
+}
+<div class="min-h-[calc(100vh-35.5rem)]" aria-hidden="true"></div>

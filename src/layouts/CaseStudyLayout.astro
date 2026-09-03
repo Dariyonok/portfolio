@@ -1,0 +1,53 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from './BaseLayout.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, summary, role, year, cover, coverAlt } = project.data;
+---
+
+<BaseLayout title={`${title} — Portfolio`} description={summary}>
+  <article class="mx-auto max-w-4xl px-6 py-12">
+    <a href="/" class="text-sm text-neutral-500 hover:text-neutral-900">&larr; Back to work</a>
+
+    <header class="mt-6 border-b border-neutral-200 pb-8">
+      <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+      <p class="mt-2 max-w-2xl text-neutral-600">{summary}</p>
+      <dl class="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sm">
+        {
+          role.length > 0 && (
+            <div>
+              <dt class="text-neutral-400">Role</dt>
+              <dd class="text-neutral-800">{role.join(', ')}</dd>
+            </div>
+          )
+        }
+        <div>
+          <dt class="text-neutral-400">Year</dt>
+          <dd class="text-neutral-800">{year}</dd>
+        </div>
+      </dl>
+    </header>
+
+    {
+      cover && (
+        <Image
+          src={cover}
+          alt={coverAlt ?? ''}
+          class="mt-8 w-full rounded-lg object-cover"
+        />
+      )
+    }
+
+    <div
+      class="prose prose-neutral mt-8 max-w-none prose-headings:font-semibold prose-headings:tracking-tight"
+    >
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

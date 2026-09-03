@@ -1,0 +1,145 @@
+---
+// The "опрос пользователей" stat box: a цель/выборка two-column intro,
+// then a stack of key-finding rows. Its own white "infographic" frame —
+// `data-reveal="scale"` scales it in 0.95 → 1 on scroll (see
+// ScrollReveal.astro). Panel padding is 40px (2.5rem), matching the
+// content column's own 9-column width (it's a direct child of that
+// column, so no extra width rule needed here).
+//
+// Each finding row: [left stack] [arrow] [right stack], all three flex-1
+// (Figma's "fill" sizing) with a 20px (1.25rem) gap between them. Both
+// stacks are vertical, 10px (0.625rem) gap.
+//
+// Each stack (left = percent/heading/description, right = insightPercent/
+// insightHeading/insight) can carry a big number, a heading, both absent
+// (bare description/insight only), following whichever of these the
+// source actually has:
+//  - `percent`/`insightPercent` (Медведиум's left side; Aistio's right
+//    side) — a big number, Manrope SemiBold 64px/112% (the same style as
+//    the "задача проекта" quote heading), body text below in the site's
+//    regular paragraph style (grey primary).
+//  - `heading`/`insightHeading` (Easy Buddy) — a subheading instead of a
+//    number, H4: Manrope SemiBold 24px/112%, grey primary — body text
+//    below styled as a quote instead (grey secondary).
+//  - neither (Aistio's left side) — just the paragraph on its own, grey
+//    secondary (quote-like, same as the `heading` case, since a bare
+//    hypothesis statement reads the same way).
+// A stack picks at most one of percent/heading, never both. Each side's
+// body-text color is independent — driven by that side's own percent
+// presence, not the other side's.
+//
+// `arrowLabel` (Caption M, 16px/112%, grey secondary) sits above the
+// arrow itself — e.g. "поэтому мы..." between a problem and its fix, or
+// Aistio's "гипотеза подтвердилась"/"гипотеза не подтвердилась".
+// `arrowIcon` is a small icon next to that label — e.g. Aistio's
+// check/cross showing whether a hypothesis was confirmed.
+// `findingsLabel` is an optional Caption M uppercase label (matching
+// goalLabel/sampleLabel) above the whole findings stack, for sources
+// that name it (e.g. "инсайты").
+//
+// `image`/`imageAlt` is an optional full-width illustration below a
+// stat's row (Aistio) — these come as one finished composite (screenshot
+// + its own annotation callouts already drawn in), not something this
+// component overlays itself, so it's just a plain image.
+import RevealText from "../RevealText.astro";
+import { nbsp } from "../../lib/text";
+
+interface Stat {
+  percent?: string;
+  heading?: string;
+  description: string;
+  arrowLabel?: string;
+  arrowIcon?: string;
+  insightPercent?: string;
+  insightHeading?: string;
+  insight: string;
+  image?: string;
+  imageAlt?: string;
+}
+interface Props {
+  goalLabel: string;
+  goal: string;
+  sampleLabel: string;
+  sample: string;
+  findingsLabel?: string;
+  stats: Stat[];
+}
+const { goalLabel, goal, sampleLabel, sample, findingsLabel, stats } = Astro.props;
+---
+
+<div data-reveal="scale" class="flex flex-col gap-[2.5rem] rounded-[2.25rem] bg-white p-[2.5rem]">
+  <div class="grid grid-cols-1 gap-[2rem] border-b border-black/10 pb-[2.5rem] sm:grid-cols-2">
+    <div class="flex flex-col gap-[0.75rem]">
+      {/* Caption M: Manrope Regular, 18px/112%. */}
+      <p class="text-[1rem] uppercase leading-[1.12] text-[#aaa7a7]">{nbsp(goalLabel)}</p>
+      <RevealText text={nbsp(goal)} unit="line" class="text-[1.25rem] leading-[1.12] text-[#252322]" />
+    </div>
+    <div class="flex flex-col gap-[0.75rem]">
+      <p class="text-[1rem] uppercase leading-[1.12] text-[#aaa7a7]">{nbsp(sampleLabel)}</p>
+      <RevealText text={nbsp(sample)} unit="line" class="text-[1.25rem] leading-[1.12] text-[#252322]" />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-[2rem]">
+    {findingsLabel && <p class="text-[1rem] uppercase leading-[1.12] text-[#aaa7a7]">{nbsp(findingsLabel)}</p>}
+    {
+      stats.map((stat) => {
+        // Both sides share one color mode for the row — a percent
+        // anywhere in it (either side; Медведиум's is on the left,
+        // Aistio's on the right) reads the whole row as a confident,
+        // numbers-backed finding (primary grey); no percent at all reads
+        // it as more reflective/quote-like (secondary grey) — matches
+        // the established Медведиум/Easy Buddy look, just no longer
+        // assuming the percent is always on the left.
+        const isPercentRow = Boolean(stat.percent || stat.insightPercent);
+        return (
+          <div class="flex flex-col gap-[1.5rem]">
+            <div class="flex flex-col gap-[1rem] sm:flex-row sm:items-center sm:gap-[1.25rem]">
+              <div class="flex flex-1 flex-col gap-[0.625rem]">
+                {stat.percent && <p class="text-[4rem] font-semibold leading-[1.12] text-[#252322]">{stat.percent}</p>}
+                {stat.heading && (
+                  <p class="text-[1.5rem] font-semibold leading-[1.12] text-[#252322]">{nbsp(stat.heading)}</p>
+                )}
+                <RevealText
+                  text={nbsp(stat.description)}
+                  unit="line"
+                  class:list={["text-[1.25rem] leading-[1.12]", isPercentRow ? "text-[#585454]" : "text-[#aaa7a7]"]}
+                />
+              </div>
+              <div class="hidden flex-1 flex-col items-center gap-[0.5rem] sm:flex">
+                {stat.arrowLabel && (
+                  <p class="flex items-center gap-[0.375rem] text-[1rem] leading-[1.12] text-[#aaa7a7]">
+                    {stat.arrowIcon && <img src={stat.arrowIcon} alt="" class="h-[1rem] w-[1rem]" />}
+                    {nbsp(stat.arrowLabel)}
+                  </p>
+                )}
+                <img src="/images/home/icons/arrow-research-findings.svg" alt="" class="w-full" aria-hidden="true" />
+              </div>
+              <div class="flex flex-1 flex-col gap-[0.625rem]">
+                {stat.insightPercent && (
+                  <p class="text-[4rem] font-semibold leading-[1.12] text-[#252322]">{stat.insightPercent}</p>
+                )}
+                {stat.insightHeading && (
+                  <p class="text-[1.5rem] font-semibold leading-[1.12] text-[#252322]">{nbsp(stat.insightHeading)}</p>
+                )}
+                <RevealText
+                  text={nbsp(stat.insight)}
+                  unit="line"
+                  class:list={["text-[1.25rem] leading-[1.12]", isPercentRow ? "text-[#252322]" : "text-[#aaa7a7]"]}
+                />
+              </div>
+            </div>
+            {stat.image && (
+              <img
+                src={stat.image}
+                alt={stat.imageAlt ?? ""}
+                class="w-full rounded-[2.25rem] object-cover"
+                data-reveal="scale"
+              />
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+</div>

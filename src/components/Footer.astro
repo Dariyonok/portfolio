@@ -1,0 +1,78 @@
+---
+// Matches the Figma "Frame 2087326285" — the sitewide closing CTA/footer.
+//
+// `showCTA` (default true): the homepage wants the "будем дружить!"
+// heading + caption; case study pages ask for just the social links and
+// copyright line instead — pass `showCTA={false}` there.
+import { nbsp } from '../lib/text'
+
+interface Props {
+  showCTA?: boolean;
+}
+const { showCTA = true } = Astro.props;
+
+const year = new Date().getFullYear()
+
+// `href: null` (linkedin, for now) renders as a plain `div` instead of an
+// `a` and shows the "скоро" custom cursor label — same not-live-yet
+// treatment as the Skincore card on the homepage (see FeaturedProjects.astro).
+const links: { label: string; href: string | null }[] = [
+  { label: 'telegram', href: 'https://t.me/dariyonok' },
+  { label: 'linkedin', href: null },
+  { label: 'hsedesign', href: 'https://hsedesign.ru/account/850969fa34e2406587d7fbf545269c20' },
+  { label: 'behance', href: 'https://www.behance.net/318aabd9' }
+]
+---
+
+<footer id="contact" class="px-[3.25rem] pb-[3.25rem] pt-[6rem]">
+  <div class="flex flex-col gap-[2rem]">
+    <div
+      class:list={[
+        "flex flex-col items-start gap-[2rem] md:flex-row md:items-end",
+        // With no CTA, the social links are the row's only child —
+        // `justify-between` would push a lone child to flex-start
+        // instead of keeping it at the right where it belongs.
+        showCTA ? "justify-between" : "md:justify-end",
+      ]}
+    >
+      {
+        showCTA && (
+          <div class="flex flex-col gap-[1.25rem]">
+            <h2 class="text-[2.5rem] font-semibold uppercase leading-[1.12] text-[#252322] sm:text-[4rem]">
+              будем дружить!
+            </h2>
+            <p class="max-w-[43.375rem] text-[1.5rem] leading-[1.12] text-[#585454]">
+              {nbsp('Если вы хотите обсудить совместные проекты или поболтать о новом альбоме skz, буду рада пообщаться:)')}
+            </p>
+          </div>
+        )
+      }
+
+      <div class="flex flex-wrap items-center gap-[0.25rem]">
+        {
+          links.map((link) => {
+            const Tag = link.href ? 'a' : 'div'
+            return (
+              <Tag
+                href={link.href ?? undefined}
+                target={link.href ? '_blank' : undefined}
+                rel={link.href ? 'noopener noreferrer' : undefined}
+                class="flex w-[5.9375rem] items-center justify-center rounded-[3.75rem] px-[0.625rem] py-[0.75rem] text-center text-[0.875rem] lowercase text-[#252322] transition-colors duration-300 [transition-timing-function:ease] hover:bg-[#252322] hover:text-white"
+                data-cursor={link.href ? undefined : 'soon'}
+                data-cursor-label={link.href ? undefined : 'скоро'}
+              >
+                {link.label}
+              </Tag>
+            )
+          })
+        }
+      </div>
+    </div>
+
+    <div class="h-px w-full bg-[#e2e0df]"></div>
+
+    <p class="text-right text-[1.125rem] text-[#aaa7a7]">
+      designed &amp; developed by me &amp; Claude in {year}
+    </p>
+  </div>
+</footer>

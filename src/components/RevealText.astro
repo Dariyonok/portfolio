@@ -1,0 +1,94 @@
+---
+// Word-by-word text reveal — matches the old Framer site's behavior:
+// each word starts fully invisible and rises slightly as it fades in.
+//
+// trigger="scroll" (default): tied to scroll position via
+// ScrollReveal.astro. What that means depends on `unit` (below).
+//
+// trigger="load": plays once, staggered word-by-word, as soon as the page
+// is ready — not tied to scroll at all. Used for the hero, so it replays
+// every reload.
+//
+// unit="word" (default): scroll-scrubbed continuously — each word's
+// reveal is tied directly to scroll position, reversible if you scroll
+// back up. Used for short scroll-triggered text (section headings,
+// eyebrow labels), where that's only a handful of words.
+// unit="line": a one-time reveal instead — the whole paragraph fades in
+// together the first time it's ~15% into the viewport (see
+// initParagraphReveal in ScrollReveal.astro), not scroll-scrubbed. Used
+// for body paragraphs: those needed multiple lines' worth of scrolling
+// before continuous scrubbing ever got to the last line, which read as
+// sluggish rather than intentional.
+//
+// `links`: turn specific words into external links inline, styled Grey
+// Secondary → Grey Primary on hover (same convention as SideNav.astro).
+// Match against the word with leading/trailing punctuation stripped, so
+// `links={[{ text: "дизайн-система", href: "..." }]}` still catches
+// "дизайн-система," or "(дизайн-система)" — the punctuation itself stays
+// outside the link. `href=""` is a fine placeholder until you have the
+// real URL, same as AwardsList's `award.href`.
+interface Props {
+  text: string;
+  as?: string;
+  class?: string;
+  trigger?: "scroll" | "load";
+  unit?: "word" | "line";
+  wordDelay?: number; // ms between words, load trigger only
+  startDelay?: number; // ms added to every word's delay — chain multiple
+  // RevealText blocks into one continuous cascade instead of each
+  // restarting from word 0 (e.g. a second heading line, or a tagline
+  // that should pick up where the heading's stagger left off).
+  links?: { text: string; href: string }[];
+  [dataAttr: `data-${string}`]: string | undefined; // forwarded to the rendered tag, e.g. data-pin-group
+}
+
+const {
+  text,
+  as: Tag = "p",
+  class: className = "",
+  trigger = "scroll",
+  unit = "word",
+  wordDelay = 45,
+  startDelay = 0,
+  links = [] as { text: string; href: string }[],
+  ...rest // forwarded as-is, e.g. data-pin-group for ScrollReveal.astro's pin groups
+} = Astro.props;
+const words = text.split(" ");
+
+const PUNCT = /^([«"'(]*)(.*?)([.,!?;:»"')]*)$/s;
+function matchLink(word: string) {
+  const [, lead, core, trail] = word.match(PUNCT) ?? ["", "", word, ""];
+  const link = links.find((l) => l.text === core);
+  return link ? { lead, core, trail, href: link.href } : null;
+}
+---
+
+<Tag class={className} data-reveal-text data-reveal-trigger={trigger} data-reveal-unit={unit} {...rest}>
+  {words.map((word, i) => {
+    const link = matchLink(word);
+    const delayStyle = trigger === "load" ? { "--reveal-delay": `${startDelay + i * wordDelay}ms` } : undefined;
+    return (
+      <>
+        <span class="reveal-word" style={delayStyle}>
+          {link ? (
+            <>
+              {link.lead}
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[#aaa7a7] transition-colors duration-300 [transition-timing-function:ease] hover:text-[#585454]"
+              >
+                {link.core}
+              </a>
+              {link.trail}
+            </>
+          ) : (
+            word
+          )}
+        </span>
+        {i < words.length - 1 ? " " : ""}
+      </>
+    );
+  })}
+</Tag>
